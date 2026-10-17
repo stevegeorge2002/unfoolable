@@ -10,7 +10,7 @@ Built from scratch at The Recursive Agents Hackathon (Oct 17, 2026) on **Crusoe 
 | Starting team + Auditor, 18 hidden tasks | **0 false "done" claims**, accuracy up (94.0→96.8% standard, 45.8→51.9% hard) |
 | Self-evolution (v0 → v6), adversarial hard mode | **45.8% → 62.3% accuracy (+16.5 pts)** |
 | Coach's predicted gain vs. real gain | **overestimated 7 of 7 times, avg +48 pts** |
-| Self-edits proposed / rejected by the gate | 7 / **4 rejected** |
+| Self-edits proposed by the Coach | 7 proposed → **4 rejected by the gate**, 3 kept |
 | Trickster tricks that failed the fairness check | 2 caught by review; now enforced automatically (trick must ship an exact `untrick`) |
 
 Full tables: `AUDIT_RESULTS.md`, `RESULTS.md`, `RESULTS_backup1.md`. Raw data: `runs/`, `runs_backup1/`.
