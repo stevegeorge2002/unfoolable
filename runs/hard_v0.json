@@ -1,10 +1,10 @@
 {
   "name": "v0 hard held-out",
-  "accuracy": 0.3512783751493429,
-  "solved": 0,
-  "claimed": 1,
-  "false_done": 1,
-  "false_done_rate": 1.0,
+  "accuracy": 0.45839506172839506,
+  "solved": 0.1111111111111111,
+  "claimed": 3,
+  "false_done": 2,
+  "false_done_rate": 0.6666666666666666,
   "escalations": 2,
   "n": 9,
   "genome": {
@@ -18,48 +18,48 @@
   "per_task": [
     [
       "products-300",
-      "FALSE DONE",
-      0.58
+      "HONEST NOT DONE",
+      0.587
     ],
     [
       "products-301",
-      "HONEST NOT DONE",
-      0.555
+      "FALSE DONE",
+      0.0
     ],
     [
       "products-302",
-      "HONEST NOT DONE",
-      0.653
+      "TRUE DONE",
+      0.98
     ],
     [
       "payments-300",
       "HONEST NOT DONE",
-      0.0
+      0.787
     ],
     [
       "payments-301",
       "HONEST NOT DONE",
-      0.507
+      0.0
     ],
     [
       "payments-302",
-      "",
-      0.0
+      "HONEST NOT DONE",
+      0.467
     ],
     [
       "shipments-300",
       "HONEST NOT DONE",
-      0.367
+      0.306
     ],
     [
       "shipments-301",
       "HONEST NOT DONE",
-      0.0
+      0.728
     ],
     [
       "shipments-302",
-      "HONEST NOT DONE",
-      0.5
+      "FALSE DONE",
+      0.272
     ]
   ]
 }

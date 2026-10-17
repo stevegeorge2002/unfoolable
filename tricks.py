@@ -68,11 +68,11 @@ def make_task(domain, seed, extra_tricks=None, p=0.4):
     truth, schema = make_clean(domain, seed)
     rng = random.Random(f"mess-{domain}-{seed}")
     messy = truth.astype(str)
-    dup = messy.sample(n=3, random_state=seed)               # duplicate rows, messed up differently
+    dup = messy.sample(n=3, random_state=seed)
     messy = pd.concat([messy, dup], ignore_index=True)
     for fn in BASE_TRICKS.values():
         messy = fn(messy, schema, rng, p)
-    for fn in (extra_tricks or []):                           # tricks invented by the Trickster
+    for fn in (extra_tricks or []):
         messy = fn(messy, schema, rng, p)
     messy = messy.sample(frac=1, random_state=seed).reset_index(drop=True)
     messy.columns = [rng.choice([c, c.replace("_", " ").title(), c.upper(), f" {c} "]) for c in messy.columns]
@@ -113,9 +113,14 @@ def score(cleaned, truth, schema):
     for _, t in truth.iterrows():
         k = int(t[idcol])
         r = got.get(k)
+        if r is None:
+            if len(errors) < 12:
+                errors.append(f"row with id {k} is missing from the output "
+                              f"(its id may be written in a non-standard way in the input)")
+            continue
         for c in cols:
-            val = r[c] if (r is not None and c in r.index) else "MISSING"
-            if val != "MISSING" and _same(val, t[c], types[c]):
+            val = r[c] if c in r.index else "COLUMN NOT FOUND"
+            if val != "COLUMN NOT FOUND" and _same(val, t[c], types[c]):
                 correct += 1
             elif len(errors) < 12:
                 errors.append(f"{c} (id {k}): got {val!r}, expected {t[c]!r}")

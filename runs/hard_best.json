@@ -1,67 +1,70 @@
 {
-  "name": "v3 hard held-out",
-  "accuracy": 0.3314134173273958,
+  "name": "v6 hard held-out",
+  "accuracy": 0.6230791575889615,
   "solved": 0,
-  "claimed": 1,
-  "false_done": 1,
+  "claimed": 3,
+  "false_done": 3,
   "false_done_rate": 1.0,
-  "escalations": 2,
+  "escalations": 0,
   "n": 9,
   "genome": {
-    "gid": "v3",
-    "parent": "v0",
+    "gid": "v6",
+    "parent": "v5",
     "spec_lessons": [
       "Add a strict completeness check that requires every field to be non-empty and match the expected format for all rows; any row with missing or placeholder values (e.g., 'MISSING') must fail the spec."
     ],
-    "build_lessons": [],
+    "build_lessons": [
+      "When cleaning numeric or string fields, scan for accidental digit duplication (e.g., '2092096.3' \u2192 '2096.3') by detecting repeated substrings and applying a rule to keep only the first occurrence if the duplicated part matches a plausible value pattern.",
+      "When parsing numeric fields from strings, first remove any non-digit characters except a single decimal point or leading minus sign, then validate the resulting value against plausible ranges (e.g., monthly fees < 100k, seats < 1000) to catch digit duplication or prefix errors like '22794.63' \u2192 '2794.63'."
+    ],
     "max_iters": 4,
-    "note": "spec: Add a strict completeness check that requires every field to be non-empty and match the expected format for al"
+    "note": "build: When parsing numeric fields from strings, first remove any non-digit characters except a single decimal point "
   },
   "per_task": [
     [
       "products-300",
       "HONEST NOT DONE",
-      0.903
+      0.693
     ],
     [
       "products-301",
       "HONEST NOT DONE",
-      0.187
+      0.387
     ],
     [
       "products-302",
-      "",
-      0.0
+      "FALSE DONE",
+      0.867
     ],
     [
       "payments-300",
       "HONEST NOT DONE",
-      0.58
+      0.727
     ],
     [
       "payments-301",
       "HONEST NOT DONE",
-      0.0
+      0.659
     ],
     [
       "payments-302",
       "HONEST NOT DONE",
-      0.313
+      0.653
     ],
     [
       "shipments-300",
-      "HONEST NOT DONE",
-      0.494
+      "FALSE DONE",
+      0.233
     ],
     [
       "shipments-301",
       "FALSE DONE",
-      0.505
+      0.761
     ],
     [
       "shipments-302",
       "HONEST NOT DONE",
-      0.0
+      0.628
     ]
   ]
 }

@@ -57,12 +57,13 @@ def extract_json(text):
     for pat in (r"```json\s*(.*?)```", r"```\s*(\{.*?\})\s*```", r"(\{.*\})"):
         m = re.search(pat, text, re.S)
         if m:
-            try:
-                return json.loads(m.group(1))
-            except json.JSONDecodeError:
-                pass
+            raw = m.group(1)
+            for candidate in (raw, re.sub(r'\\(?!["\\/bfnrtu])', r'\\\\', raw)):
+                try:
+                    return json.loads(candidate)
+                except json.JSONDecodeError:
+                    pass
     return None
-
 
 def extract_code(text):
     m = re.search(r"```(?:python)?\s*(.*?)```", text, re.S)

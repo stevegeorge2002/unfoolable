@@ -10,7 +10,8 @@ from tricks import make_task, score
 console = Console()
 DONE_BAR = 0.98   # real accuracy needed for a "done" claim to count as true
 STYLE = {"SPEC": "cyan", "CONTINUE": "white", "REPLAN": "yellow", "STOP": "green", "ESCALATE": "bold red",
-         "TRUTH": "bold", "KEEP": "bold green", "REJECT": "red", "TRICK": "magenta", "SCORE": "bold blue"}
+         "TRUTH": "bold", "KEEP": "bold green", "REJECT": "red", "TRICK": "magenta", "SCORE": "bold blue",
+         "COACH": "yellow"}
 
 
 def show(tid, kind, msg):
@@ -20,7 +21,6 @@ def show(tid, kind, msg):
     console.print(Text(f"{tid:<16} {kind:<9} {msg}", style=style))
 
 
-# ---------- sandbox: runs untrusted cleaning code in a separate process ----------
 RUN_CLEAN = r'''
 import pandas as pd, traceback
 raw = pd.read_csv("messy.csv", dtype=str, keep_default_na=False)
@@ -82,7 +82,6 @@ def run_in_sandbox(code, messy, checks, timeout=60):
         return out, [], "CHECKS CRASHED: " + (q.stderr or "")[-800:]
 
 
-# ---------- the team's evolvable settings ----------
 @dataclass
 class Genome:
     gid: str = "v0"
@@ -143,7 +142,7 @@ Return JSON only: {"assumptions": ["..."], "checks": ["assert ...", "..."]}"""
 BUILD_SYS = """You are a meticulous data engineer. Write a Python function clean(raw) that takes the messy pandas
 DataFrame `raw` (every value is a string; headers may be messy) and returns a NEW DataFrame that matches the
 target schema exactly: same column names in the same order, correct types and formats.
-Use only pandas, re and datetime. Return exactly ONE ```python``` block with imports and def clean(raw):"""
+Use only pandas, re, datetime and unicodedata. Return exactly ONE ```python``` block with imports and def clean(raw):"""
 
 
 def _lessons(lst):
@@ -160,10 +159,17 @@ class Team:
                 f"MESSY INPUT (CSV):\n{task['messy'].to_csv(index=False)}")
 
     def write_checks(self, g, task):
-        reply = self.llm.chat(SUPER, SPEC_SYS + _lessons(g.spec_lessons), self._job(task), max_tokens=2500)
-        spec = extract_json(reply) or {}
-        checks = [c.strip() for c in spec.get("checks", []) if isinstance(c, str) and c.strip().startswith("assert")]
-        return spec.get("assumptions", []), checks
+        for attempt in range(2):
+            extra = "" if attempt == 0 else ("\n\nIMPORTANT: your last reply was not valid JSON. Return ONLY valid "
+                                             "JSON and escape every backslash inside regex strings.")
+            reply = self.llm.chat(SUPER, SPEC_SYS + _lessons(g.spec_lessons), self._job(task) + extra,
+                                  max_tokens=3000, temperature=0.6 if attempt == 0 else 0.3)
+            spec = extract_json(reply) or {}
+            checks = [c.strip() for c in spec.get("checks", [])
+                      if isinstance(c, str) and c.strip().startswith("assert")]
+            if checks:
+                return spec.get("assumptions", []), checks
+        return [], []
 
     def run(self, g, task):
         r = Result(task["id"])
@@ -179,6 +185,7 @@ class Team:
             ev("ESCALATE", "could not write a definition of done")
             return r
         wd, code, feedback, out = Watchdog(g.max_iters), "", "", None
+        best_out, best_pass = None, -1.0      # checkpoint: keep the best attempt, not the last one
         temp = 0.6
         for i in range(g.max_iters):
             r.iters = i + 1
@@ -188,12 +195,14 @@ class Team:
                                   + "\n".join(checks) + prev, max_tokens=3500, temperature=temp)
             code = extract_code(reply)
             out, res, err = run_in_sandbox(code, task["messy"], checks)
-            r.check_pass = sum(ok for _, ok, _ in res) / len(checks) if res else 0.0
+            cur_pass = sum(ok for _, ok, _ in res) / len(checks) if res else 0.0
+            if out is not None and cur_pass > best_pass:
+                best_out, best_pass = out, cur_pass
             fails = [f"{c}  -> {e}" for c, ok, e in res if not ok]
             feedback = (err + "\n" if err else "") + "\n".join(fails)[:2500]
             if out is not None:
                 feedback += "\nFIRST ROWS OF YOUR OUTPUT:\n" + out.head(5).to_string()[:1200]
-            decision, why = wd.decide(code, r.check_pass, i, bool(err))
+            decision, why = wd.decide(code, cur_pass, i, bool(err))
             ev(decision, f"try {i + 1}: {why}")
             if decision == "REPLAN":
                 feedback += "\nWATCHDOG: your approach is stuck. Rethink from scratch with a different strategy."
@@ -201,6 +210,7 @@ class Team:
             elif decision in ("STOP", "ESCALATE"):
                 r.decision = decision
                 break
+        out, r.check_pass = best_out, max(best_pass, 0.0)
         r.claimed_done = out is not None and r.check_pass == 1.0
         if out is not None:
             r.acc, r.errors = score(out, task["truth"], task["schema"])

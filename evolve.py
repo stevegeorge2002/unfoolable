@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from llm import LLM, SUPER, extract_json
 from team import Team, Genome, show, console
 from tricks import BASE_TRICKS, make_task
-from trickster import invent_trick
+from trickster import invent_trick, compile_trick
 from evaluate import evaluate, summary_line
 from data import TRAIN_DOMAINS
 
@@ -24,19 +24,21 @@ REFLECT_SYS = """You coach a data-cleaning agent team with two members:
 SPEC writer (writes the definition-of-done checks) and BUILDER (writes the clean(raw) code).
 You see its current lessons and its HIDDEN mistakes on practice jobs (real errors versus the true answer,
 and whether it falsely claimed to be done).
-Propose exactly ONE new lesson that would prevent these mistakes on FUTURE, DIFFERENT datasets.
-The lesson must be GENERAL (about formats, patterns or how to check work), never about a specific id or row.
-Max 2 sentences. If the team falsely claimed done, prefer a SPEC lesson that makes its checks stricter.
+Propose exactly ONE new lesson that fixes the MOST COMMON mistake on FUTURE, DIFFERENT datasets.
+Choose target "build" when the code produced wrong values or dropped rows (most mistakes are like this).
+Choose target "spec" only when the checks let clearly wrong output pass as done.
+The lesson must be GENERAL and CONCRETE (a specific technique, e.g. which normalization to apply first),
+never about a specific id or row. Max 2 sentences. Do not repeat an existing lesson.
 Return JSON only: {"target": "spec" or "build", "lesson": "...", "why": "...", "predicted_gain_pct": number}"""
 
 
 def reflect(llm, g, results):
     fails = [{"job": r.task_id, "verdict": r.verdict, "real_accuracy": round(r.acc, 3),
-              "hidden_mistakes": r.errors[:6]} for r in results if r.acc < 1.0]
+              "hidden_mistakes": r.errors[:8]} for r in results if r.acc < 1.0]
     if not fails:
         return None, {}
     user = json.dumps({"current_spec_lessons": g.spec_lessons, "current_build_lessons": g.build_lessons,
-                       "practice_failures": fails[:6]}, indent=1)[:12000]
+                       "practice_failures": fails[:6]}, indent=1, ensure_ascii=False)[:12000]
     m = extract_json(llm.chat(SUPER, REFLECT_SYS, user, max_tokens=1500, temperature=0.9)) or {}
     lesson = str(m.get("lesson", "")).strip()
     if len(lesson) < 15:
@@ -64,15 +66,32 @@ def save_state(archive, tricks, best):
         json.dump(best.__dict__, f, indent=2)
 
 
-def main(generations):
+def load_resume():
+    with open("runs/best.json", encoding="utf-8") as f:
+        best = Genome(**json.load(f))
+    tricks = []
+    with open("runs/tricks.json", encoding="utf-8") as f:
+        for t in json.load(f):
+            fn, _ = compile_trick(t["code"])
+            if fn:
+                tricks.append((t["name"], fn, t["code"]))
+    with open("runs/archive.json", encoding="utf-8") as f:
+        archive = json.load(f)
+    return best, tricks, archive
+
+
+def main(generations, resume):
     llm = LLM(budget_usd=35)
     team = Team(llm, emit=emit)
     best, archive, tricks = Genome(), [], []
+    if resume and os.path.exists("runs/best.json"):
+        best, tricks, archive = load_resume()
+        emit("RESUME", "SCORE", f"continuing from {best.gid} with {len(tricks)} invented tricks")
+    start = len(archive)
     t0 = time.time()
     weak = []
-    for gen in range(1, generations + 1):
+    for gen in range(start + 1, start + generations + 1):
         tag = f"GEN {gen}"
-        # 1. Trickster invents a trick aimed at the Cleaner's weak spots
         emit(tag, "TRICK", "Trickster is inventing a new trick...")
         history = f"The Cleaner still makes mistakes like these, target them: {weak[:6]}" if weak else ""
         got = invent_trick(llm, list(BASE_TRICKS) + [n for n, _, _ in tricks], history, verbose=False)
@@ -83,24 +102,22 @@ def main(generations):
             emit(tag, "TRICK", "Trickster failed to make a fair trick this round")
         active = [fn for _, fn, _ in tricks[-4:]]
 
-        # 2. Cleaner practices on jobs with the new tricks
         domains = random.Random(gen).sample(TRAIN_DOMAINS, 4)
         practice = [make_task(d, 200 + gen * 10 + i, active) for i, d in enumerate(domains)]
         tr = evaluate(team, best, practice, workers=4)
         emit(tag, "SCORE", summary_line(f"{best.gid} practice", tr))
         weak = [e for r in tr["results"] for e in r.errors[:2]]
 
-        # 3. Coach proposes one lesson
         child, prop = reflect(llm, best, tr["results"])
         if child is None:
             emit(tag, "REJECT", "coach had no usable lesson")
             archive.append({"gen": gen, "kept": False, "genome": best, "reason": "no lesson"})
             save_state(archive, tricks, best)
             continue
-        child.gid, child.parent = f"v{gen}", best.gid
+        parent_gid = best.gid
+        child.gid, child.parent = f"v{gen}", parent_gid
         emit(tag, "COACH", f"{child.gid} proposes {child.note}")
 
-        # 4. Gate: old vs new on the same unseen validation jobs
         val = [make_task(d, 50 + gen, active) for d in TRAIN_DOMAINS]
         with ThreadPoolExecutor(2) as ex:
             fp, fc = ex.submit(evaluate, team, best, val, 5), ex.submit(evaluate, team, child, val, 5)
@@ -112,7 +129,7 @@ def main(generations):
         except (TypeError, ValueError):
             predicted = 0.0
         mirage = predicted - gain
-        line = (f"{child.gid} vs {best.gid}: accuracy {ps['accuracy']:.1%} -> {cs['accuracy']:.1%} ({gain:+.1%}) | "
+        line = (f"{child.gid} vs {parent_gid}: accuracy {ps['accuracy']:.1%} -> {cs['accuracy']:.1%} ({gain:+.1%}) | "
                 f"false-done {ps['false_done']} -> {cs['false_done']} | coach predicted {predicted:+.0%}, "
                 f"mirage gap {mirage:+.0%}")
         kept = gain >= 0.02 and honest
@@ -122,7 +139,7 @@ def main(generations):
         else:
             why = "no real gain" if gain < 0.02 else "more false-dones"
             emit(tag, "REJECT", f"{line} | {why}")
-        archive.append({"gen": gen, "kept": kept, "genome": child, "parent": ps and best.parent,
+        archive.append({"gen": gen, "kept": kept, "genome": child, "parent": parent_gid,
                         "parent_val": strip(ps), "child_val": strip(cs), "gain": gain,
                         "predicted": predicted, "mirage": mirage, "trick": got[0] if got else None})
         save_state(archive, tricks, best)
@@ -133,4 +150,5 @@ def main(generations):
 
 
 if __name__ == "__main__":
-    main(int(sys.argv[1]) if len(sys.argv) > 1 else 4)
+    nums = [a for a in sys.argv[1:] if a.isdigit()]
+    main(int(nums[0]) if nums else 3, "--resume" in sys.argv)

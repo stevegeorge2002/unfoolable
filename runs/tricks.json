@@ -6,5 +6,17 @@
   {
     "name": "invisible zero-width space insertion - inserts undetectable Unicode ZWSP into strings",
     "code": "# TRICK: invisible zero-width space insertion - inserts undetectable Unicode ZWSP into strings\ndef trick(df, schema, rng, p):\n    for col_name, col_type, allowed in schema:\n        if col_type in ('id', 'name', 'email', 'phone', 'date', 'money', 'decimal', 'int', 'category'):\n            for idx in df.index:\n                if rng.random() < p:\n                    val = df.at[idx, col_name]\n                    if isinstance(val, str) and len(val) > 0:\n                        pos = rng.randint(0, len(val))\n                        zwsp = '\\u200b'  # Zero-width space, invisible in most displays\n                        df.at[idx, col_name] = val[:pos] + zwsp + val[pos:]\n    return df"
+  },
+  {
+    "name": "duplicate prefix addition - prepends first few characters of the value to itself",
+    "code": "# TRICK: duplicate prefix addition - prepends first few characters of the value to itself\nimport re\ndef trick(df, schema, rng, p):\n    for col_name, col_type, allowed in schema:\n        if col_name not in df.columns:\n            continue\n        for i in range(len(df)):\n            val = df.at[i, col_name]\n            if isinstance(val, str) and val and rng.random() < p:\n                # Add a prefix of 1-3 characters from the start of the value\n                prefix_len = min(rng.randint(1, 3), len(val))\n                prefix = val[:prefix_len]\n                df.at[i, col_name] = prefix + val\n    return df"
+  },
+  {
+    "name": "id as quoted string with trailing space - ids become quoted values with extra space after ",
+    "code": "# TRICK: id as quoted string with trailing space - ids become quoted values with extra space after number\nimport re\n\ndef trick(df, schema, rng, p):\n    id_cols = [col for col, typ, _ in schema if typ == 'id']\n    for col in id_cols:\n        for i in range(len(df)):\n            if rng.random() < p:\n                val = df.at[i, col]\n                if val.isdigit():\n                    df.at[i, col] = f'\"{val} \"'  # quoted with trailing space\n    return df"
+  },
+  {
+    "name": "missing first character - drops the initial character of the string value",
+    "code": "# TRICK: missing first character - drops the initial character of the string value\ndef trick(df, schema, rng, p):\n    import re\n    for col_name, col_type, allowed in schema:\n        if col_type in ('id', 'name', 'email', 'phone', 'date', 'money', 'decimal', 'int', 'category'):\n            for idx in df.index:\n                if rng.random() < p:\n                    val = str(df.at[idx, col_name])\n                    if len(val) > 1:\n                        df.at[idx, col_name] = val[1:]\n    return df"
   }
 ]

@@ -300,3 +300,227 @@
 {"t": 1792265498.1064386, "tid": "subscriptions-54", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 91.4% -> HONEST NOT DONE"}
 {"t": 1792265498.1073961, "tid": "GEN 4", "kind": "REJECT", "msg": "v4 vs v3: accuracy 46.7% -> 18.2% (-28.5%) | false-done 1 -> 1 | coach predicted +45%, mirage gap +73% | no real gain"}
 {"t": 1792265498.1120782, "tid": "DONE", "kind": "SCORE", "msg": "best version: v3 | lessons: 1"}
+{"t": 1792267076.5829988, "tid": "RESUME", "kind": "SCORE", "msg": "continuing from v3 with 2 invented tricks"}
+{"t": 1792267076.5854125, "tid": "GEN 5", "kind": "TRICK", "msg": "Trickster is inventing a new trick..."}
+{"t": 1792267079.3152592, "tid": "GEN 5", "kind": "TRICK", "msg": "new trick: duplicate prefix addition - prepends first few characters of the value to itself"}
+{"t": 1792267090.0264285, "tid": "subscriptions-250", "kind": "SPEC", "msg": "15 done-checks | assumes: The raw input is a pandas DataFrame with columns matching the messy CSV header (case-insensitive, extra spaces ignored).; Cleaning steps inc"}
+{"t": 1792267090.1558754, "tid": "employees-252", "kind": "SPEC", "msg": "16 done-checks | assumes: Input is a pandas DataFrame `raw` with columns possibly containing extra spaces, mixed case, special characters, and formatting issues.; All"}
+{"t": 1792267090.88343, "tid": "orders-251", "kind": "SPEC", "msg": "14 done-checks | assumes: Raw data contains full-width digits, extra spaces, symbols, typos in product names, malformed dates, duplicate rows, and invalid values; cle"}
+{"t": 1792267093.9101398, "tid": "invoices-253", "kind": "SPEC", "msg": "23 done-checks | assumes: The cleaned DataFrame `out` must contain exactly the rows that pass all cleaning and validation rules, with no missing or placeholder values"}
+{"t": 1792267120.3284812, "tid": "orders-251", "kind": "CONTINUE", "msg": "try 1: 93% of done-checks pass"}
+{"t": 1792267125.1062143, "tid": "subscriptions-250", "kind": "STOP", "msg": "try 1: all done-checks pass"}
+{"t": 1792267125.1122417, "tid": "subscriptions-250", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 30.7% -> FALSE DONE"}
+{"t": 1792267133.187285, "tid": "employees-252", "kind": "CONTINUE", "msg": "try 1: 88% of done-checks pass"}
+{"t": 1792267137.3477068, "tid": "invoices-253", "kind": "CONTINUE", "msg": "try 1: 96% of done-checks pass"}
+{"t": 1792267155.1891553, "tid": "orders-251", "kind": "CONTINUE", "msg": "try 2: 93% of done-checks pass"}
+{"t": 1792267180.2688038, "tid": "employees-252", "kind": "CONTINUE", "msg": "try 2: 88% of done-checks pass"}
+{"t": 1792267186.9828022, "tid": "invoices-253", "kind": "STOP", "msg": "try 2: all done-checks pass"}
+{"t": 1792267186.9888031, "tid": "invoices-253", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 12.0% -> FALSE DONE"}
+{"t": 1792267189.2793436, "tid": "orders-251", "kind": "REPLAN", "msg": "try 3: stall: no progress in 2 tries"}
+{"t": 1792267229.3415325, "tid": "employees-252", "kind": "REPLAN", "msg": "try 3: stall: no progress in 2 tries"}
+{"t": 1792267251.2855372, "tid": "orders-251", "kind": "REPLAN", "msg": "try 4: drift: no clean() function written"}
+{"t": 1792267251.2885628, "tid": "orders-251", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 16.2% -> HONEST NOT DONE"}
+{"t": 1792267274.9978378, "tid": "employees-252", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267275.0038362, "tid": "employees-252", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 23.9% -> HONEST NOT DONE"}
+{"t": 1792267275.006362, "tid": "GEN 5", "kind": "SCORE", "msg": "v3 practice: accuracy 20.7% | solved 0% | false-done 2/2 claims (100%) | escalations 0 | tasks 4"}
+{"t": 1792267277.7163618, "tid": "GEN 5", "kind": "COACH", "msg": "v5 proposes build: When cleaning numeric or string fields, scan for accidental digit duplication (e.g., '2092096.3' \u2192 '2096.3') b"}
+{"t": 1792267287.8392198, "tid": "orders-55", "kind": "SPEC", "msg": "15 done-checks | assumes: The raw input contains extra whitespace, full-width digits, malformed dates, extra characters in product names, invalid numeric formats, cur"}
+{"t": 1792267288.9168653, "tid": "invoices-55", "kind": "SPEC", "msg": "20 done-checks | assumes: Raw input has been cleaned into DataFrame `out` with correct column names and order.; All values are strings in `raw`; cleaning has removed "}
+{"t": 1792267288.9536643, "tid": "invoices-55", "kind": "SPEC", "msg": "16 done-checks | assumes: Input CSV has been read into `raw` with all columns as strings (dtype=object).; Cleaning has produced `out` as a pandas DataFrame with the e"}
+{"t": 1792267289.8751771, "tid": "subscriptions-55", "kind": "SPEC", "msg": "15 done-checks | assumes: Input has been loaded into `raw` as a pandas DataFrame with all columns as strings (dtype=object).; Cleaning has been applied to produce `ou"}
+{"t": 1792267289.97723, "tid": "employees-55", "kind": "SPEC", "msg": "17 done-checks | assumes: Raw input has been cleaned such that column names are stripped and lowercased for matching; actual column access uses cleaned names like 'em"}
+{"t": 1792267291.4826329, "tid": "orders-55", "kind": "SPEC", "msg": "18 done-checks | assumes: All rows must have non-empty values after stripping whitespace and removing invisible Unicode characters.; Invisible Unicode characters (e.g"}
+{"t": 1792267291.5381796, "tid": "employees-55", "kind": "SPEC", "msg": "16 done-checks | assumes: Raw data has been loaded into `raw` as a pandas DataFrame with all columns as strings.; Cleaning steps (trimming, case normalization, duplic"}
+{"t": 1792267292.0754933, "tid": "subscriptions-55", "kind": "SPEC", "msg": "20 done-checks | assumes: The raw input is a CSV string with header row; after cleaning, the DataFrame `out` must have exactly the columns in the specified order.; Al"}
+{"t": 1792267292.3175423, "tid": "customers-55", "kind": "SPEC", "msg": "17 done-checks | assumes: Raw input contains irregular whitespace, full-width digits, non-standard date formats, extra symbols in emails/phones/lifetime_value, and ma"}
+{"t": 1792267294.0565462, "tid": "customers-55", "kind": "SPEC", "msg": "22 done-checks | assumes: Raw data contains duplicates, malformed values, extra spaces, non-standard characters, and inconsistent formatting. Cleaning must standardiz"}
+{"t": 1792267314.3422434, "tid": "orders-55", "kind": "CONTINUE", "msg": "try 1: 87% of done-checks pass"}
+{"t": 1792267322.4651196, "tid": "invoices-55", "kind": "STOP", "msg": "try 1: all done-checks pass"}
+{"t": 1792267322.4671307, "tid": "invoices-55", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 0.0% -> FALSE DONE"}
+{"t": 1792267325.7351084, "tid": "subscriptions-55", "kind": "CONTINUE", "msg": "try 1: 85% of done-checks pass"}
+{"t": 1792267326.5904636, "tid": "subscriptions-55", "kind": "CONTINUE", "msg": "try 1: 87% of done-checks pass"}
+{"t": 1792267327.726672, "tid": "customers-55", "kind": "STOP", "msg": "try 1: all done-checks pass"}
+{"t": 1792267327.7326686, "tid": "customers-55", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 5.8% -> FALSE DONE"}
+{"t": 1792267328.1818664, "tid": "employees-55", "kind": "CONTINUE", "msg": "try 1: 0% of done-checks pass (code crashed)"}
+{"t": 1792267328.488964, "tid": "employees-55", "kind": "CONTINUE", "msg": "try 1: 81% of done-checks pass"}
+{"t": 1792267334.8262815, "tid": "orders-55", "kind": "STOP", "msg": "try 2: all done-checks pass"}
+{"t": 1792267334.832281, "tid": "orders-55", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 13.0% -> FALSE DONE"}
+{"t": 1792267335.2970033, "tid": "invoices-55", "kind": "CONTINUE", "msg": "try 1: 0% of done-checks pass (code crashed)"}
+{"t": 1792267335.8799448, "tid": "orders-55", "kind": "CONTINUE", "msg": "try 1: 83% of done-checks pass"}
+{"t": 1792267337.2141747, "tid": "customers-55", "kind": "CONTINUE", "msg": "try 1: 0% of done-checks pass (code crashed)"}
+{"t": 1792267353.039495, "tid": "subscriptions-55", "kind": "CONTINUE", "msg": "try 2: 87% of done-checks pass"}
+{"t": 1792267355.3307166, "tid": "subscriptions-55", "kind": "CONTINUE", "msg": "try 2: 90% of done-checks pass"}
+{"t": 1792267359.501902, "tid": "employees-55", "kind": "REPLAN", "msg": "try 2: loop: same code again"}
+{"t": 1792267363.278469, "tid": "customers-55", "kind": "CONTINUE", "msg": "try 2: 94% of done-checks pass"}
+{"t": 1792267363.4608028, "tid": "invoices-55", "kind": "STOP", "msg": "try 2: all done-checks pass"}
+{"t": 1792267363.4672, "tid": "invoices-55", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 8.9% -> FALSE DONE"}
+{"t": 1792267363.8315635, "tid": "orders-55", "kind": "CONTINUE", "msg": "try 2: 89% of done-checks pass"}
+{"t": 1792267364.1546018, "tid": "employees-55", "kind": "CONTINUE", "msg": "try 2: 94% of done-checks pass"}
+{"t": 1792267382.781281, "tid": "subscriptions-55", "kind": "REPLAN", "msg": "try 3: stall: no progress in 2 tries"}
+{"t": 1792267388.2994342, "tid": "subscriptions-55", "kind": "REPLAN", "msg": "try 3: loop: same code again"}
+{"t": 1792267390.2520487, "tid": "employees-55", "kind": "CONTINUE", "msg": "try 3: 94% of done-checks pass"}
+{"t": 1792267391.7695377, "tid": "customers-55", "kind": "CONTINUE", "msg": "try 3: 94% of done-checks pass"}
+{"t": 1792267392.7907548, "tid": "orders-55", "kind": "REPLAN", "msg": "try 3: loop: same code again"}
+{"t": 1792267402.4172862, "tid": "employees-55", "kind": "CONTINUE", "msg": "try 3: 94% of done-checks pass"}
+{"t": 1792267417.5534372, "tid": "subscriptions-55", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267417.5586398, "tid": "subscriptions-55", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 0.0% -> HONEST NOT DONE"}
+{"t": 1792267418.1889844, "tid": "employees-55", "kind": "STOP", "msg": "try 4: out of tries"}
+{"t": 1792267418.1949997, "tid": "employees-55", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 25.0% -> HONEST NOT DONE"}
+{"t": 1792267423.8060002, "tid": "customers-55", "kind": "REPLAN", "msg": "try 4: loop: same code again"}
+{"t": 1792267423.8121443, "tid": "customers-55", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 4.5% -> HONEST NOT DONE"}
+{"t": 1792267425.6000826, "tid": "subscriptions-55", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267425.6106524, "tid": "subscriptions-55", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 25.2% -> HONEST NOT DONE"}
+{"t": 1792267426.4139113, "tid": "orders-55", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267426.421857, "tid": "orders-55", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 31.2% -> HONEST NOT DONE"}
+{"t": 1792267443.7366338, "tid": "employees-55", "kind": "REPLAN", "msg": "try 4: loop: same code again"}
+{"t": 1792267443.7400873, "tid": "employees-55", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 18.1% -> HONEST NOT DONE"}
+{"t": 1792267443.7413895, "tid": "GEN 5", "kind": "KEEP", "msg": "v5 vs v3: accuracy 7.4% -> 19.0% (+11.6%) | false-done 3 -> 1 | coach predicted +40%, mirage gap +28%"}
+{"t": 1792267443.7652192, "tid": "GEN 6", "kind": "TRICK", "msg": "Trickster is inventing a new trick..."}
+{"t": 1792267445.5074875, "tid": "GEN 6", "kind": "TRICK", "msg": "new trick: id as quoted string with trailing space - ids become quoted values with extra space after "}
+{"t": 1792267454.4593518, "tid": "orders-263", "kind": "SPEC", "msg": "16 done-checks | assumes: Input CSV has been read into `raw` with all columns as strings, preserving whitespace and special characters.; Cleaning has been applied to "}
+{"t": 1792267454.9408538, "tid": "subscriptions-260", "kind": "SPEC", "msg": "19 done-checks | assumes: The raw input has been read into a DataFrame `raw` with all columns as strings, preserving whitespace and special characters.; Cleaning step"}
+{"t": 1792267456.262645, "tid": "customers-261", "kind": "SPEC", "msg": "15 done-checks | assumes: Raw data has been loaded into `raw` as a pandas DataFrame with all columns as strings, preserving whitespace and special characters.; Cleani"}
+{"t": 1792267456.8895862, "tid": "invoices-262", "kind": "SPEC", "msg": "16 done-checks | assumes: The cleaned DataFrame `out` has been processed from `raw` to match the target schema: column names, order, data types, and constraints.; All"}
+{"t": 1792267491.9621732, "tid": "orders-263", "kind": "STOP", "msg": "try 1: all done-checks pass"}
+{"t": 1792267491.9688802, "tid": "orders-263", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 12.0% -> FALSE DONE"}
+{"t": 1792267493.2792976, "tid": "customers-261", "kind": "CONTINUE", "msg": "try 1: 93% of done-checks pass"}
+{"t": 1792267497.090779, "tid": "subscriptions-260", "kind": "CONTINUE", "msg": "try 1: 84% of done-checks pass"}
+{"t": 1792267498.73216, "tid": "invoices-262", "kind": "CONTINUE", "msg": "try 1: 75% of done-checks pass"}
+{"t": 1792267532.1744187, "tid": "subscriptions-260", "kind": "CONTINUE", "msg": "try 2: 84% of done-checks pass"}
+{"t": 1792267536.3013644, "tid": "customers-261", "kind": "CONTINUE", "msg": "try 2: 93% of done-checks pass"}
+{"t": 1792267548.898649, "tid": "invoices-262", "kind": "CONTINUE", "msg": "try 2: 75% of done-checks pass"}
+{"t": 1792267564.625852, "tid": "subscriptions-260", "kind": "REPLAN", "msg": "try 3: loop: same code again"}
+{"t": 1792267573.8931406, "tid": "customers-261", "kind": "REPLAN", "msg": "try 3: stall: no progress in 2 tries"}
+{"t": 1792267581.731768, "tid": "invoices-262", "kind": "REPLAN", "msg": "try 3: stall: no progress in 2 tries"}
+{"t": 1792267588.5643005, "tid": "subscriptions-260", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267588.5696192, "tid": "subscriptions-260", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 7.2% -> HONEST NOT DONE"}
+{"t": 1792267604.8245616, "tid": "customers-261", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267604.8279374, "tid": "customers-261", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 5.5% -> HONEST NOT DONE"}
+{"t": 1792267612.9059212, "tid": "invoices-262", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267612.9139209, "tid": "invoices-262", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 39.6% -> HONEST NOT DONE"}
+{"t": 1792267612.916959, "tid": "GEN 6", "kind": "SCORE", "msg": "v5 practice: accuracy 16.1% | solved 0% | false-done 1/1 claims (100%) | escalations 0 | tasks 4"}
+{"t": 1792267615.8801877, "tid": "GEN 6", "kind": "COACH", "msg": "v6 proposes build: When parsing numeric fields from strings, first remove any non-digit characters except a single decimal point "}
+{"t": 1792267627.548337, "tid": "orders-56", "kind": "SPEC", "msg": "17 done-checks | assumes: All order_id values must be positive integers after cleaning (non-numeric characters removed, full-width digits converted).; customer_name m"}
+{"t": 1792267628.4932747, "tid": "employees-56", "kind": "SPEC", "msg": "16 done-checks | assumes: Raw CSV has been read into `raw` with all columns as strings, preserving whitespace and special characters as shown.; Cleaning has produced "}
+{"t": 1792267628.5169175, "tid": "subscriptions-56", "kind": "SPEC", "msg": "15 done-checks | assumes: The raw input has been parsed into a DataFrame `raw` with columns matching the header (after stripping whitespace).; The cleaned DataFrame `"}
+{"t": 1792267628.6251493, "tid": "customers-56", "kind": "SPEC", "msg": "17 done-checks | assumes: Raw column names may have inconsistent casing, extra spaces, or special characters; mapping is based on semantic meaning after stripping and"}
+{"t": 1792267629.6975358, "tid": "employees-56", "kind": "SPEC", "msg": "15 done-checks | assumes: The raw input is a string representation of a CSV with headers and data rows as shown. After cleaning, the DataFrame 'out' must have exactly"}
+{"t": 1792267630.3186524, "tid": "customers-56", "kind": "SPEC", "msg": "20 done-checks | assumes: Raw input may contain non-breaking spaces, zero-width characters, and formatting artifacts; these are stripped during cleaning.; Duplicate r"}
+{"t": 1792267630.454753, "tid": "subscriptions-56", "kind": "SPEC", "msg": "19 done-checks | assumes: Raw input has been cleaned into a DataFrame `out` with correct column names and order.; All string values have been stripped of leading/trai"}
+{"t": 1792267631.222017, "tid": "orders-56", "kind": "SPEC", "msg": "19 done-checks | assumes: Raw data has been cleaned: full-width digits converted to ASCII, zero-width/non-breaking spaces removed, currency symbols and text stripped,"}
+{"t": 1792267640.9452147, "tid": "invoices-56", "kind": "SPEC", "msg": "16 done-checks | assumes: Raw input is a CSV string with header row; after cleaning, 'out' is a pandas DataFrame with correct types and formatting.; Invoice IDs may c"}
+{"t": 1792267643.372818, "tid": "invoices-56", "kind": "SPEC", "msg": "20 done-checks | assumes: Raw data is in `raw` as a list of lists (CSV rows, first row is header).; Cleaning has been applied to produce `out` as a pandas DataFrame.;"}
+{"t": 1792267667.9914875, "tid": "customers-56", "kind": "CONTINUE", "msg": "try 1: 95% of done-checks pass"}
+{"t": 1792267673.571764, "tid": "orders-56", "kind": "CONTINUE", "msg": "try 1: 71% of done-checks pass"}
+{"t": 1792267674.6077204, "tid": "invoices-56", "kind": "CONTINUE", "msg": "try 1: 60% of done-checks pass"}
+{"t": 1792267676.6741724, "tid": "subscriptions-56", "kind": "CONTINUE", "msg": "try 1: 67% of done-checks pass"}
+{"t": 1792267676.718722, "tid": "employees-56", "kind": "CONTINUE", "msg": "try 1: 93% of done-checks pass"}
+{"t": 1792267679.0699584, "tid": "subscriptions-56", "kind": "CONTINUE", "msg": "try 1: 84% of done-checks pass"}
+{"t": 1792267684.6634095, "tid": "employees-56", "kind": "STOP", "msg": "try 1: all done-checks pass"}
+{"t": 1792267684.6725004, "tid": "employees-56", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 14.2% -> FALSE DONE"}
+{"t": 1792267686.647794, "tid": "customers-56", "kind": "CONTINUE", "msg": "try 1: 0% of done-checks pass (code crashed)"}
+{"t": 1792267687.0917494, "tid": "orders-56", "kind": "CONTINUE", "msg": "try 1: 68% of done-checks pass"}
+{"t": 1792267689.0056865, "tid": "invoices-56", "kind": "CONTINUE", "msg": "try 1: 81% of done-checks pass"}
+{"t": 1792267707.5041056, "tid": "invoices-56", "kind": "REPLAN", "msg": "try 2: loop: same code again"}
+{"t": 1792267709.2380724, "tid": "customers-56", "kind": "REPLAN", "msg": "try 2: loop: same code again"}
+{"t": 1792267716.3070467, "tid": "orders-56", "kind": "CONTINUE", "msg": "try 2: 71% of done-checks pass"}
+{"t": 1792267717.861295, "tid": "employees-56", "kind": "CONTINUE", "msg": "try 2: 93% of done-checks pass"}
+{"t": 1792267721.1322868, "tid": "invoices-56", "kind": "CONTINUE", "msg": "try 2: 81% of done-checks pass"}
+{"t": 1792267724.2012775, "tid": "subscriptions-56", "kind": "REPLAN", "msg": "try 2: loop: same code again"}
+{"t": 1792267726.6797323, "tid": "orders-56", "kind": "CONTINUE", "msg": "try 2: 68% of done-checks pass"}
+{"t": 1792267726.9122756, "tid": "customers-56", "kind": "STOP", "msg": "try 2: all done-checks pass"}
+{"t": 1792267726.9178264, "tid": "customers-56", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 5.8% -> FALSE DONE"}
+{"t": 1792267727.6294017, "tid": "subscriptions-56", "kind": "REPLAN", "msg": "try 2: loop: same code again"}
+{"t": 1792267735.4800901, "tid": "invoices-56", "kind": "STOP", "msg": "try 3: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267735.4865675, "tid": "invoices-56", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 24.5% -> HONEST NOT DONE"}
+{"t": 1792267740.859624, "tid": "customers-56", "kind": "STOP", "msg": "try 3: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267740.8651567, "tid": "customers-56", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 17.5% -> HONEST NOT DONE"}
+{"t": 1792267750.016815, "tid": "invoices-56", "kind": "REPLAN", "msg": "try 3: stall: no progress in 2 tries"}
+{"t": 1792267753.4260068, "tid": "orders-56", "kind": "REPLAN", "msg": "try 3: loop: same code again"}
+{"t": 1792267753.8077066, "tid": "subscriptions-56", "kind": "CONTINUE", "msg": "try 3: 80% of done-checks pass"}
+{"t": 1792267755.0037196, "tid": "employees-56", "kind": "REPLAN", "msg": "try 3: stall: no progress in 2 tries"}
+{"t": 1792267761.5046632, "tid": "subscriptions-56", "kind": "STOP", "msg": "try 3: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267761.5098133, "tid": "subscriptions-56", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 8.9% -> HONEST NOT DONE"}
+{"t": 1792267762.6703174, "tid": "orders-56", "kind": "REPLAN", "msg": "try 3: loop: same code again"}
+{"t": 1792267776.850991, "tid": "subscriptions-56", "kind": "STOP", "msg": "try 4: out of tries"}
+{"t": 1792267776.8545105, "tid": "subscriptions-56", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 7.1% -> HONEST NOT DONE"}
+{"t": 1792267777.6625915, "tid": "invoices-56", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267777.6682332, "tid": "invoices-56", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 5.1% -> HONEST NOT DONE"}
+{"t": 1792267780.61748, "tid": "orders-56", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267780.6237187, "tid": "orders-56", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 18.1% -> HONEST NOT DONE"}
+{"t": 1792267785.4330795, "tid": "employees-56", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267785.4387705, "tid": "employees-56", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 21.5% -> HONEST NOT DONE"}
+{"t": 1792267794.3238602, "tid": "orders-56", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267794.3295162, "tid": "orders-56", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 14.6% -> HONEST NOT DONE"}
+{"t": 1792267794.332736, "tid": "GEN 6", "kind": "KEEP", "msg": "v6 vs v5: accuracy 11.5% -> 15.9% (+4.4%) | false-done 1 -> 1 | coach predicted +45%, mirage gap +41%"}
+{"t": 1792267794.3433146, "tid": "GEN 7", "kind": "TRICK", "msg": "Trickster is inventing a new trick..."}
+{"t": 1792267796.011233, "tid": "GEN 7", "kind": "TRICK", "msg": "new trick: missing first character - drops the initial character of the string value"}
+{"t": 1792267804.8151145, "tid": "invoices-271", "kind": "SPEC", "msg": "15 done-checks | assumes: Raw input has been parsed into a DataFrame `raw` with columns matching the header (after stripping whitespace and handling quotes/commas).; "}
+{"t": 1792267806.3581393, "tid": "employees-272", "kind": "SPEC", "msg": "16 done-checks | assumes: Duplicate rows (identical in all columns) are removed; only unique rows remain.; All fields must be non-empty and conform to the specified f"}
+{"t": 1792267807.806621, "tid": "orders-270", "kind": "SPEC", "msg": "27 done-checks | assumes: Raw input contains duplicate order_ids and malformed data; cleaning must produce exactly one row per unique valid order_id.; All fields must"}
+{"t": 1792267816.1747715, "tid": "customers-273", "kind": "SPEC", "msg": "20 done-checks | assumes: Raw input has been cleaned into DataFrame `out` with correct column names and order as per target schema.; All string values in `out` have b"}
+{"t": 1792267842.2531998, "tid": "invoices-271", "kind": "CONTINUE", "msg": "try 1: 87% of done-checks pass"}
+{"t": 1792267851.840488, "tid": "customers-273", "kind": "STOP", "msg": "try 1: all done-checks pass"}
+{"t": 1792267851.846491, "tid": "customers-273", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 12.4% -> FALSE DONE"}
+{"t": 1792267852.839996, "tid": "orders-270", "kind": "CONTINUE", "msg": "try 1: 93% of done-checks pass"}
+{"t": 1792267854.9259334, "tid": "employees-272", "kind": "STOP", "msg": "try 1: all done-checks pass"}
+{"t": 1792267854.9311817, "tid": "employees-272", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 0.0% -> FALSE DONE"}
+{"t": 1792267875.8960912, "tid": "invoices-271", "kind": "CONTINUE", "msg": "try 2: 87% of done-checks pass"}
+{"t": 1792267895.7626595, "tid": "orders-270", "kind": "CONTINUE", "msg": "try 2: 93% of done-checks pass"}
+{"t": 1792267909.2726617, "tid": "invoices-271", "kind": "REPLAN", "msg": "try 3: stall: no progress in 2 tries"}
+{"t": 1792267946.1706245, "tid": "orders-270", "kind": "REPLAN", "msg": "try 3: loop: same code again"}
+{"t": 1792267946.4875278, "tid": "invoices-271", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267946.4927192, "tid": "invoices-271", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 4.8% -> HONEST NOT DONE"}
+{"t": 1792267998.1272821, "tid": "orders-270", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792267998.1312835, "tid": "orders-270", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 11.4% -> HONEST NOT DONE"}
+{"t": 1792267998.1332846, "tid": "GEN 7", "kind": "SCORE", "msg": "v6 practice: accuracy 7.2% | solved 0% | false-done 2/2 claims (100%) | escalations 0 | tasks 4"}
+{"t": 1792268000.9013715, "tid": "GEN 7", "kind": "COACH", "msg": "v7 proposes build: When cleaning ID fields, normalize by stripping all non-digit characters and padding with leading zeros to a f"}
+{"t": 1792268012.9530025, "tid": "orders-57", "kind": "SPEC", "msg": "15 done-checks | assumes: Input CSV has been parsed into a pandas DataFrame `raw` with string dtype for all columns.; Column names in `raw` are normalized by strippin"}
+{"t": 1792268013.1302454, "tid": "invoices-57", "kind": "SPEC", "msg": "15 done-checks | assumes: Raw input has been parsed into a DataFrame `raw` with string columns, preserving whitespace and special characters as shown.; Cleaning steps"}
+{"t": 1792268013.670122, "tid": "employees-57", "kind": "SPEC", "msg": "14 done-checks | assumes: Raw data has been loaded into `raw` as a pandas DataFrame with all columns as strings, preserving original whitespace and symbols.; Cleaning"}
+{"t": 1792268014.339983, "tid": "customers-57", "kind": "SPEC", "msg": "18 done-checks | assumes: Raw input has been parsed into a DataFrame `raw` with columns as given in the header row (including extra spaces and case variations).; Clea"}
+{"t": 1792268014.4535584, "tid": "employees-57", "kind": "SPEC", "msg": "15 done-checks | assumes: Raw input has been parsed into a DataFrame `raw` with columns as given in the header (including extra spaces and quotes).; Cleaning steps (t"}
+{"t": 1792268015.1587605, "tid": "invoices-57", "kind": "SPEC", "msg": "18 done-checks | assumes: The raw input has been read into a DataFrame `raw` with all columns as strings, preserving whitespace and special characters as shown.; Clea"}
+{"t": 1792268015.2233388, "tid": "orders-57", "kind": "SPEC", "msg": "16 done-checks | assumes: The cleaned DataFrame `out` is derived from `raw` after parsing, cleaning, and deduplication.; All string fields are stripped of leading/tra"}
+{"t": 1792268016.4428399, "tid": "subscriptions-57", "kind": "SPEC", "msg": "15 done-checks | assumes: The cleaned DataFrame `out` is derived from `raw` after removing exact duplicate rows and applying transformations to meet the target schema"}
+{"t": 1792268016.7079139, "tid": "customers-57", "kind": "SPEC", "msg": "19 done-checks | assumes: All messy values have been cleaned such that customer_id is a positive integer, full_name is in 'First Last' Title Case with single spaces, "}
+{"t": 1792268019.0745769, "tid": "subscriptions-57", "kind": "SPEC", "msg": "15 done-checks | assumes: The raw input is a list of strings representing CSV lines, including a header. The cleaning process has already parsed this into a DataFrame"}
+{"t": 1792268063.5607746, "tid": "customers-57", "kind": "CONTINUE", "msg": "try 1: 0% of done-checks pass (code crashed)"}
+{"t": 1792268066.5678532, "tid": "employees-57", "kind": "STOP", "msg": "try 1: all done-checks pass"}
+{"t": 1792268066.5726962, "tid": "employees-57", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 14.3% -> FALSE DONE"}
+{"t": 1792268072.257323, "tid": "invoices-57", "kind": "CONTINUE", "msg": "try 1: 0% of done-checks pass (code crashed)"}
+{"t": 1792268072.2729623, "tid": "subscriptions-57", "kind": "CONTINUE", "msg": "try 1: 87% of done-checks pass"}
+{"t": 1792268072.4746428, "tid": "customers-57", "kind": "CONTINUE", "msg": "try 1: 63% of done-checks pass"}
+{"t": 1792268077.2830122, "tid": "employees-57", "kind": "STOP", "msg": "try 1: all done-checks pass"}
+{"t": 1792268077.288032, "tid": "employees-57", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 8.3% -> FALSE DONE"}
+{"t": 1792268079.270566, "tid": "subscriptions-57", "kind": "STOP", "msg": "try 1: all done-checks pass"}
+{"t": 1792268079.2755733, "tid": "subscriptions-57", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 12.3% -> FALSE DONE"}
+{"t": 1792268083.9914649, "tid": "orders-57", "kind": "CONTINUE", "msg": "try 1: 88% of done-checks pass"}
+{"t": 1792268084.885826, "tid": "orders-57", "kind": "CONTINUE", "msg": "try 1: 0% of done-checks pass (code crashed)"}
+{"t": 1792268087.8864636, "tid": "invoices-57", "kind": "CONTINUE", "msg": "try 1: 0% of done-checks pass (code crashed)"}
+{"t": 1792268113.253453, "tid": "customers-57", "kind": "CONTINUE", "msg": "try 2: 89% of done-checks pass"}
+{"t": 1792268125.625338, "tid": "subscriptions-57", "kind": "REPLAN", "msg": "try 2: loop: same code again"}
+{"t": 1792268127.4966757, "tid": "customers-57", "kind": "REPLAN", "msg": "try 2: loop: same code again"}
+{"t": 1792268130.518365, "tid": "invoices-57", "kind": "CONTINUE", "msg": "try 2: 0% of done-checks pass (code crashed)"}
+{"t": 1792268149.5367255, "tid": "orders-57", "kind": "CONTINUE", "msg": "try 2: 88% of done-checks pass"}
+{"t": 1792268153.6019163, "tid": "orders-57", "kind": "CONTINUE", "msg": "try 2: 0% of done-checks pass (code crashed)"}
+{"t": 1792268155.675297, "tid": "invoices-57", "kind": "STOP", "msg": "try 2: all done-checks pass"}
+{"t": 1792268155.6775987, "tid": "invoices-57", "kind": "TRUTH", "msg": "claimed DONE | real accuracy 2.6% -> FALSE DONE"}
+{"t": 1792268157.8734307, "tid": "customers-57", "kind": "REPLAN", "msg": "try 3: loop: same code again"}
+{"t": 1792268168.5492203, "tid": "subscriptions-57", "kind": "STOP", "msg": "try 3: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792268168.5534801, "tid": "subscriptions-57", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 10.3% -> HONEST NOT DONE"}
+{"t": 1792268169.8990839, "tid": "customers-57", "kind": "STOP", "msg": "try 3: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792268169.9023945, "tid": "customers-57", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 9.7% -> HONEST NOT DONE"}
+{"t": 1792268189.5979898, "tid": "invoices-57", "kind": "CONTINUE", "msg": "try 3: 93% of done-checks pass"}
+{"t": 1792268204.3479624, "tid": "customers-57", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792268204.3519754, "tid": "customers-57", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 0.0% -> HONEST NOT DONE"}
+{"t": 1792268213.6873364, "tid": "orders-57", "kind": "REPLAN", "msg": "try 3: loop: same code again"}
+{"t": 1792268217.6800184, "tid": "orders-57", "kind": "REPLAN", "msg": "try 3: loop: same code again"}
+{"t": 1792268236.5485363, "tid": "invoices-57", "kind": "STOP", "msg": "try 4: out of tries"}
+{"t": 1792268236.5518816, "tid": "invoices-57", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 5.9% -> HONEST NOT DONE"}
+{"t": 1792268262.1412747, "tid": "orders-57", "kind": "STOP", "msg": "try 4: stuck after re-plan; reporting NOT DONE"}
+{"t": 1792268262.145291, "tid": "orders-57", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 8.6% -> HONEST NOT DONE"}
+{"t": 1792268271.355305, "tid": "orders-57", "kind": "ESCALATE", "msg": "try 4: still failing after re-plan; done-checks may be wrong -> needs a human"}
+{"t": 1792268271.3566551, "tid": "orders-57", "kind": "TRUTH", "msg": "claimed NOT DONE | real accuracy 0.0% -> HONEST NOT DONE"}
+{"t": 1792268271.3602695, "tid": "GEN 7", "kind": "REJECT", "msg": "v7 vs v6: accuracy 6.6% -> 7.8% (+1.1%) | false-done 1 -> 3 | coach predicted +40%, mirage gap +39% | no real gain"}
+{"t": 1792268271.3732486, "tid": "DONE", "kind": "SCORE", "msg": "best version: v6 | lessons: 3"}
