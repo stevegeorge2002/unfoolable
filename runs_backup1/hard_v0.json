@@ -1,0 +1,65 @@
+{
+  "name": "v0 hard held-out",
+  "accuracy": 0.3512783751493429,
+  "solved": 0,
+  "claimed": 1,
+  "false_done": 1,
+  "false_done_rate": 1.0,
+  "escalations": 2,
+  "n": 9,
+  "genome": {
+    "gid": "v0",
+    "parent": null,
+    "spec_lessons": [],
+    "build_lessons": [],
+    "max_iters": 4,
+    "note": "starting version"
+  },
+  "per_task": [
+    [
+      "products-300",
+      "FALSE DONE",
+      0.58
+    ],
+    [
+      "products-301",
+      "HONEST NOT DONE",
+      0.555
+    ],
+    [
+      "products-302",
+      "HONEST NOT DONE",
+      0.653
+    ],
+    [
+      "payments-300",
+      "HONEST NOT DONE",
+      0.0
+    ],
+    [
+      "payments-301",
+      "HONEST NOT DONE",
+      0.507
+    ],
+    [
+      "payments-302",
+      "",
+      0.0
+    ],
+    [
+      "shipments-300",
+      "HONEST NOT DONE",
+      0.367
+    ],
+    [
+      "shipments-301",
+      "HONEST NOT DONE",
+      0.0
+    ],
+    [
+      "shipments-302",
+      "HONEST NOT DONE",
+      0.5
+    ]
+  ]
+}

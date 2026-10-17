@@ -1,0 +1,67 @@
+{
+  "name": "v3 held-out (after)",
+  "accuracy": 0.6577777777777778,
+  "solved": 0.4444444444444444,
+  "claimed": 2,
+  "false_done": 1,
+  "false_done_rate": 0.5,
+  "escalations": 2,
+  "n": 9,
+  "genome": {
+    "gid": "v3",
+    "parent": "v0",
+    "spec_lessons": [
+      "Add a strict completeness check that requires every field to be non-empty and match the expected format for all rows; any row with missing or placeholder values (e.g., 'MISSING') must fail the spec."
+    ],
+    "build_lessons": [],
+    "max_iters": 4,
+    "note": "spec: Add a strict completeness check that requires every field to be non-empty and match the expected format for al"
+  },
+  "per_task": [
+    [
+      "products-100",
+      "FALSE DONE",
+      0.96
+    ],
+    [
+      "products-101",
+      "HONEST NOT DONE",
+      0.0
+    ],
+    [
+      "products-102",
+      "",
+      0.0
+    ],
+    [
+      "payments-100",
+      "HONEST NOT DONE",
+      0.967
+    ],
+    [
+      "payments-101",
+      "HONEST NOT DONE",
+      1.0
+    ],
+    [
+      "payments-102",
+      "HONEST NOT DONE",
+      0.993
+    ],
+    [
+      "shipments-100",
+      "HONEST NOT DONE",
+      1.0
+    ],
+    [
+      "shipments-101",
+      "",
+      0.0
+    ],
+    [
+      "shipments-102",
+      "TRUE DONE",
+      1.0
+    ]
+  ]
+}

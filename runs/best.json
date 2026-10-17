@@ -1,0 +1,10 @@
+{
+  "gid": "v3",
+  "parent": "v0",
+  "spec_lessons": [
+    "Add a strict completeness check that requires every field to be non-empty and match the expected format for all rows; any row with missing or placeholder values (e.g., 'MISSING') must fail the spec."
+  ],
+  "build_lessons": [],
+  "max_iters": 4,
+  "note": "spec: Add a strict completeness check that requires every field to be non-empty and match the expected format for al"
+}

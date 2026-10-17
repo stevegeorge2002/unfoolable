@@ -1,0 +1,151 @@
+[
+  {
+    "gen": 1,
+    "kept": false,
+    "genome": {
+      "gid": "v1",
+      "parent": "v0",
+      "spec_lessons": [
+        "For any record where all fields are marked 'MISSING', the check must fail unless the source data explicitly contains null/missing values for every field."
+      ],
+      "build_lessons": [],
+      "max_iters": 4,
+      "note": "spec: For any record where all fields are marked 'MISSING', the check must fail unless the source data explicitly co"
+    },
+    "parent": null,
+    "parent_val": {
+      "accuracy": 0.7891551459293394,
+      "solved": 0.2,
+      "claimed": 1,
+      "false_done": 1,
+      "false_done_rate": 1.0,
+      "escalations": 0,
+      "n": 5
+    },
+    "child_val": {
+      "accuracy": 0.6970250896057347,
+      "solved": 0,
+      "claimed": 0,
+      "false_done": 0,
+      "false_done_rate": 0.0,
+      "escalations": 0,
+      "n": 5
+    },
+    "gain": -0.09213005632360471,
+    "predicted": 0.4,
+    "mirage": 0.49213005632360474,
+    "trick": "fullwidth substitution - replace ASCII alphanumerics with lookalike fullwidth Unicode"
+  },
+  {
+    "gen": 2,
+    "kept": false,
+    "genome": {
+      "gid": "v2",
+      "parent": "v0",
+      "spec_lessons": [
+        "When an entire row is marked 'MISSING' for all fields, the spec must require checking whether the row was accidentally skipped or misaligned during processing, not just validating individual field formats."
+      ],
+      "build_lessons": [],
+      "max_iters": 4,
+      "note": "spec: When an entire row is marked 'MISSING' for all fields, the spec must require checking whether the row was acci"
+    },
+    "parent": null,
+    "parent_val": {
+      "accuracy": 0.20777777777777778,
+      "solved": 0,
+      "claimed": 2,
+      "false_done": 2,
+      "false_done_rate": 1.0,
+      "escalations": 1,
+      "n": 5
+    },
+    "child_val": {
+      "accuracy": 0.0772782258064516,
+      "solved": 0,
+      "claimed": 1,
+      "false_done": 1,
+      "false_done_rate": 1.0,
+      "escalations": 0,
+      "n": 5
+    },
+    "gain": -0.13049955197132618,
+    "predicted": 0.4,
+    "mirage": 0.5304995519713263,
+    "trick": "invisible zero-width space insertion - inserts undetectable Unicode ZWSP into strings"
+  },
+  {
+    "gen": 3,
+    "kept": true,
+    "genome": {
+      "gid": "v3",
+      "parent": "v0",
+      "spec_lessons": [
+        "Add a strict completeness check that requires every field to be non-empty and match the expected format for all rows; any row with missing or placeholder values (e.g., 'MISSING') must fail the spec."
+      ],
+      "build_lessons": [],
+      "max_iters": 4,
+      "note": "spec: Add a strict completeness check that requires every field to be non-empty and match the expected format for al"
+    },
+    "parent": "v0",
+    "parent_val": {
+      "accuracy": 0.2823809523809524,
+      "solved": 0,
+      "claimed": 1,
+      "false_done": 1,
+      "false_done_rate": 1.0,
+      "escalations": 0,
+      "n": 5
+    },
+    "child_val": {
+      "accuracy": 0.37015873015873013,
+      "solved": 0,
+      "claimed": 1,
+      "false_done": 1,
+      "false_done_rate": 1.0,
+      "escalations": 0,
+      "n": 5
+    },
+    "gain": 0.08777777777777773,
+    "predicted": 0.65,
+    "mirage": 0.5622222222222223,
+    "trick": null
+  },
+  {
+    "gen": 4,
+    "kept": false,
+    "genome": {
+      "gid": "v4",
+      "parent": "v3",
+      "spec_lessons": [
+        "Add a strict completeness check that requires every field to be non-empty and match the expected format for all rows; any row with missing or placeholder values (e.g., 'MISSING') must fail the spec.",
+        "Add a completeness check that treats any field containing the string 'MISSING' (case-sensitive) or zero-length strings as a failure, and require all numeric fields to be non-zero and match the expected magnitude (e.g., no amount < 10 when typical values are >1000)."
+      ],
+      "build_lessons": [],
+      "max_iters": 4,
+      "note": "spec: Add a completeness check that treats any field containing the string 'MISSING' (case-sensitive) or zero-length"
+    },
+    "parent": "v0",
+    "parent_val": {
+      "accuracy": 0.46687660010240656,
+      "solved": 0,
+      "claimed": 1,
+      "false_done": 1,
+      "false_done_rate": 1.0,
+      "escalations": 0,
+      "n": 5
+    },
+    "child_val": {
+      "accuracy": 0.1822222222222222,
+      "solved": 0,
+      "claimed": 1,
+      "false_done": 1,
+      "false_done_rate": 1.0,
+      "escalations": 2,
+      "n": 5
+    },
+    "gain": -0.28465437788018433,
+    "predicted": 0.45,
+    "mirage": 0.7346543778801844,
+    "trick": null
+  }
+]
