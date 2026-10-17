@@ -85,8 +85,7 @@ def make_clean(domain, seed, n=30):
             extra = col[2] if len(col) > 2 else None
             row[name] = ids[i] if ctype == "id" else _value(rng, ctype, extra, row)
         rows.append({k: v for k, v in row.items() if not k.startswith("_")})
-    return pd.DataFrame(rows), schema
-
+    return pd.DataFrame(rows), [(c[0], c[1], c[2] if len(c) > 2 else None) for c in schema]
 
 def schema_text(schema):
     """Human-readable target spec that agents will see."""
