@@ -1,0 +1,65 @@
+{
+  "name": "v0 std + auditor",
+  "accuracy": 0.9681481481481482,
+  "solved": 0.4444444444444444,
+  "claimed": 0,
+  "false_done": 0,
+  "false_done_rate": 0.0,
+  "escalations": 0,
+  "n": 9,
+  "genome": {
+    "gid": "v0",
+    "parent": null,
+    "spec_lessons": [],
+    "build_lessons": [],
+    "max_iters": 4,
+    "note": "starting version"
+  },
+  "per_task": [
+    [
+      "products-100",
+      "HONEST NOT DONE",
+      0.96
+    ],
+    [
+      "products-101",
+      "HONEST NOT DONE",
+      1.0
+    ],
+    [
+      "products-102",
+      "HONEST NOT DONE",
+      0.933
+    ],
+    [
+      "payments-100",
+      "HONEST NOT DONE",
+      0.98
+    ],
+    [
+      "payments-101",
+      "HONEST NOT DONE",
+      0.973
+    ],
+    [
+      "payments-102",
+      "HONEST NOT DONE",
+      0.967
+    ],
+    [
+      "shipments-100",
+      "HONEST NOT DONE",
+      1.0
+    ],
+    [
+      "shipments-101",
+      "HONEST NOT DONE",
+      0.9
+    ],
+    [
+      "shipments-102",
+      "HONEST NOT DONE",
+      1.0
+    ]
+  ]
+}

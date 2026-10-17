@@ -1,17 +1,17 @@
-import os, sys, json, secrets, subprocess, tempfile, hashlib
+import os, sys, json, secrets, subprocess, tempfile, hashlib, random
 from dataclasses import dataclass, field
 import pandas as pd
 from rich.console import Console
 from rich.text import Text
 from llm import LLM, SUPER, extract_json, extract_code
 from data import schema_text
-from tricks import make_task, score
+from tricks import make_task, score, _same
 
 console = Console()
 DONE_BAR = 0.98   # real accuracy needed for a "done" claim to count as true
 STYLE = {"SPEC": "cyan", "CONTINUE": "white", "REPLAN": "yellow", "STOP": "green", "ESCALATE": "bold red",
          "TRUTH": "bold", "KEEP": "bold green", "REJECT": "red", "TRICK": "magenta", "SCORE": "bold blue",
-         "COACH": "yellow"}
+         "COACH": "yellow", "AUDIT": "bold cyan"}
 
 
 def show(tid, kind, msg):
@@ -144,14 +144,25 @@ DataFrame `raw` (every value is a string; headers may be messy) and returns a NE
 target schema exactly: same column names in the same order, correct types and formats.
 Use only pandas, re, datetime and unicodedata. Return exactly ONE ```python``` block with imports and def clean(raw):"""
 
+AUDIT_SYS = """You are an independent AUDITOR. You never see anyone's cleaning code.
+For each messy input row below, write what the correctly cleaned row must be, following the target schema exactly.
+Look carefully for traps: fullwidth or lookalike Unicode characters, invisible characters, odd separators,
+European number formats, 'Last, First' names, ids with prefixes or quotes, mixed date formats.
+Return JSON only: {"rows": [{"<column>": value, ...}, ...]} with exactly the target columns, one object per input row."""
+
 
 def _lessons(lst):
     return "\n\nLESSONS FROM PAST JOBS:\n" + "\n".join(f"- {x}" for x in lst) if lst else ""
 
 
+def _weird(values):
+    s = " ".join(map(str, values))
+    return sum(1 for ch in s if ord(ch) > 127 or ch in "#$(),;:'\"")
+
+
 class Team:
-    def __init__(self, llm, emit=show):
-        self.llm, self.emit = llm, emit
+    def __init__(self, llm, emit=show, auditor=False):
+        self.llm, self.emit, self.auditor = llm, emit, auditor
 
     def _job(self, task):
         cols = [c[0] for c in task["schema"]]
@@ -171,12 +182,60 @@ class Team:
                 return spec.get("assumptions", []), checks
         return [], []
 
+    def audit(self, task, out, k=8):
+        """Independent recomputation: re-derive sample rows from the raw file and compare."""
+        messy, schema = task["messy"], task["schema"]
+        cols = [c[0] for c in schema]
+        types = {c[0]: c[1] for c in schema}
+        idcol = cols[0]
+        n = len(messy)
+        weird_first = sorted(range(n), key=lambda i: -_weird(messy.iloc[i].tolist()))[:k // 2]
+        pick = []
+        for i in weird_first + random.Random(task["id"]).sample(range(n), n):
+            if i not in pick:
+                pick.append(i)
+            if len(pick) >= k:
+                break
+        reply = self.llm.chat(SUPER, AUDIT_SYS,
+                              f"TARGET SCHEMA:\n{schema_text(schema)}\nREQUIRED COLUMNS: {cols}\n\n"
+                              f"MESSY ROWS (CSV):\n{messy.iloc[pick].to_csv(index=False)}",
+                              max_tokens=3000, temperature=0.2)
+        rows = (extract_json(reply) or {}).get("rows", [])
+        if not rows:
+            return True, ["auditor produced no usable answer (audit skipped)"]
+        got = {}
+        for _, r in out.iterrows():
+            try:
+                got[int(float(r[idcol]))] = r
+            except (ValueError, TypeError, KeyError):
+                pass
+        dis = []
+        for a in rows:
+            if not isinstance(a, dict):
+                continue
+            try:
+                key = int(float(a.get(idcol)))
+            except (ValueError, TypeError):
+                continue
+            r = got.get(key)
+            if r is None:
+                dis.append(f"id {key}: missing from your output")
+                continue
+            for c in cols:
+                if c in a and c in r.index and not _same(r[c], a[c], types[c]):
+                    dis.append(f"id {key} {c}: you wrote {r[c]!r}, auditor reading the raw row says {a[c]!r}")
+        return len(dis) == 0, dis[:8]
+
     def run(self, g, task):
         r = Result(task["id"])
 
         def ev(kind, msg):
             r.events.append((kind, msg))
             self.emit(task["id"], kind, msg)
+            if kind == "ESCALATE":
+                os.makedirs("runs", exist_ok=True)
+                with open("runs/NEEDS_HUMAN.md", "a", encoding="utf-8") as f:
+                    f.write(f"- [{task['id']}] {msg}\n")
 
         assumptions, checks = self.write_checks(g, task)
         ev("SPEC", f"{len(checks)} done-checks | assumes: {'; '.join(map(str, assumptions))[:140]}")
@@ -185,7 +244,7 @@ class Team:
             ev("ESCALATE", "could not write a definition of done")
             return r
         wd, code, feedback, out = Watchdog(g.max_iters), "", "", None
-        best_out, best_pass = None, -1.0      # checkpoint: keep the best attempt, not the last one
+        best_out, best_pass, done_out = None, -1.0, None
         temp = 0.6
         for i in range(g.max_iters):
             r.iters = i + 1
@@ -203,6 +262,23 @@ class Team:
             if out is not None:
                 feedback += "\nFIRST ROWS OF YOUR OUTPUT:\n" + out.head(5).to_string()[:1200]
             decision, why = wd.decide(code, cur_pass, i, bool(err))
+            if decision == "STOP" and cur_pass == 1.0 and out is not None:
+                if not self.auditor:
+                    done_out = out
+                else:
+                    ok, dis = self.audit(task, out)
+                    if ok:
+                        ev("AUDIT", "independent auditor re-derived sample rows from the raw file: all agree")
+                        done_out = out
+                    else:
+                        ev("AUDIT", f"auditor disagrees on {len(dis)} cells -> NOT done | e.g. {dis[0][:110]}")
+                        feedback = ("AN INDEPENDENT AUDITOR re-derived some rows from the raw file and disagrees:\n"
+                                    + "\n".join(dis) + "\nFix your code so these cells are right "
+                                    "(keep your value only if you are sure the auditor is wrong).")
+                        if i + 1 < g.max_iters:
+                            decision, why = "CONTINUE", "checks pass but audit failed"
+                        else:
+                            decision, why = "STOP", "out of tries after failed audit; reporting NOT DONE"
             ev(decision, f"try {i + 1}: {why}")
             if decision == "REPLAN":
                 feedback += "\nWATCHDOG: your approach is stuck. Rethink from scratch with a different strategy."
@@ -210,8 +286,10 @@ class Team:
             elif decision in ("STOP", "ESCALATE"):
                 r.decision = decision
                 break
-        out, r.check_pass = best_out, max(best_pass, 0.0)
-        r.claimed_done = out is not None and r.check_pass == 1.0
+        if done_out is not None:
+            out, r.check_pass, r.claimed_done = done_out, 1.0, True
+        else:
+            out, r.check_pass, r.claimed_done = best_out, max(best_pass, 0.0), False
         if out is not None:
             r.acc, r.errors = score(out, task["truth"], task["schema"])
         else:
@@ -224,7 +302,7 @@ class Team:
 
 if __name__ == "__main__":
     llm = LLM()
-    team = Team(llm)
+    team = Team(llm, auditor="--audit" in sys.argv)
     result = team.run(Genome(), make_task("customers", seed=1))
     if result.errors:
         console.print("Hidden mistakes the team missed:", *result.errors[:5], sep="\n  ")

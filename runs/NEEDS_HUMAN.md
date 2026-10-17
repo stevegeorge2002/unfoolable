@@ -1,0 +1,4 @@
+- [products-301] try 3: still failing after re-plan; done-checks may be wrong -> needs a human
+- [products-300] try 4: still failing after re-plan; done-checks may be wrong -> needs a human
+- [shipments-300] try 4: still failing after re-plan; done-checks may be wrong -> needs a human
+- [shipments-102] try 4: still failing after re-plan; done-checks may be wrong -> needs a human
