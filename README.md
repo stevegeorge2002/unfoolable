@@ -1,118 +1,65 @@
-\# Unfoolable 🛡️
-
-\*\*Most AI agents can be fooled into saying "done." Unfoolable is a self-improving agent team that trains against an adversary — and a referee that never lets it fool itself.\*\*
-
-
-
-Built from scratch at The Recursive Agents Hackathon (Oct 17, 2026) on \*\*Crusoe Managed Inference\*\*, 100% \*\*NVIDIA Nemotron\*\*. Total cost of every experiment: \*\*under $4\*\*.
-
-
-
-\## Headline results (tasks never seen during training)
-
-| | v0 (start) | v6 (self-evolved) |
-
-|---|---|---|
-
-| Accuracy on unseen data kinds + adversarial tricks | 45.8% | \*\*62.3% (+16.5 pts)\*\* |
-
-| Accuracy on unseen data kinds (standard mess) | 94.0% | 90.5% (within noise) |
-
-| Coach's predicted gain vs. real gain | | \*\*overestimated 7 of 7 times, avg +48 pts\*\* |
-
-| Self-edits proposed / rejected by the gate | | 7 / \*\*4 rejected\*\* |
-
-
-
-Full tables: `RESULTS.md` and `RESULTS\_backup1.md`. Raw data: `runs/` and `runs\_backup1/`.
-
-
-
-\## The problem
-
-Agents fill vague goals with their own assumptions and confidently report success. When agents improve themselves, they also claim every change helped. Our v0 team said "done" on hidden tasks twice — \*\*both times it was wrong.\*\*
-
-
-
-\## How it works
-
-\*\*Cleaner team\*\* (turns a messy data file + one-line goal into clean data):
-
-\- \*\*Spec writer\*\* (Nemotron Super): writes its own \*definition of done\* as executable checks
-
-\- \*\*Builder\*\* (Nemotron Super): writes the cleaning code
-
-\- \*\*Sandbox\*\*: runs code in a separate process; checks run in another process that never imports the builder's code (nonce-protected), so the builder can't fake a pass
-
-\- \*\*Watchdog\*\* (plain code, no AI): detects loops (same code twice), stalls, drift; decides CONTINUE / REPLAN / STOP / ESCALATE to a human
-
-\- \*\*Checkpoint\*\*: keeps the best attempt, not the last one
-
-
-
-\*\*Trickster\*\* (Nemotron Super): invents new, realistic ways to corrupt data (fullwidth Unicode, zero-width spaces, quoted ids...), aimed at the Cleaner's current weak spots. Every trick is code, auto-checked for safety and shape.
-
-
-
-\*\*Coach\*\* (Nemotron Super): reads the Cleaner's hidden mistakes and proposes ONE general lesson, plus a prediction of how much it will help.
-
-
-
-\*\*Gate\*\*: old vs. new version on the same fresh validation jobs. A lesson is kept only if accuracy rises ≥2 points AND false "done" claims don't increase. We log the \*\*mirage gap\*\* = predicted gain − real gain.
-
-
-
-\*\*Referee\*\*: ground truth is known exactly (we corrupt clean data we generated), so scoring never needs an LLM judge.
-
-
-
-\## What we learned
-
-1\. \*\*Agents can't grade their own homework.\*\* Even the evolved team's self-written checks passed wrong output. Done must be verified from outside the agent.
-
-2\. \*\*Self-assessment is a mirage.\*\* The Coach predicted +28% to +65% for every lesson; real effects ranged from −28 to +12 points.
-
-3\. \*\*Adversaries cheat too.\*\* The Trickster invented 2 tricks that destroyed information (e.g. dropping first characters). We excluded them from the final exam after review. Next step: require every trick to ship its own inverse, verified automatically.
-
-4\. \*\*Self-evolved lessons generalize.\*\* Lessons learned on customers/invoices/orders improved robustness on products/payments/shipments, which it had never seen.
-
-
-
-\## Honest limitations
-
-\- Small samples (9 hidden tasks per condition, 1 seed); differences of a few points are noise.
-
-\- The 16.5-pt gain is on adversarial "hard mode"; on standard mess v6 ≈ v0.
-
-\- Run 1 used a harness with two bugs (JSON parsing of regex checks; discarding the best attempt). We fixed them, re-measured v0, and report the fixed numbers. Both runs are kept in the repo.
-
-
-
-\## Run it
-
-&#x20;   python -m venv .venv \&\& .venv\\Scripts\\activate
-
-&#x20;   pip install openai rich pandas python-dotenv
-
-&#x20;   # .env -> CRUSOE\_API\_KEY=...
-
-&#x20;   python evaluate.py              # v0 baseline on hidden tasks
-
-&#x20;   python evolve.py 3 \[--resume]   # Trickster vs Cleaner, Coach + Gate
-
-&#x20;   python final.py                 # before/after table -> RESULTS.md
-
-&#x20;   python replay.py runs/live\_log.jsonl 40 TRICK,COACH,KEEP,REJECT,SCORE   # replay highlights
-
-
-
-\## Models (Crusoe Managed Inference)
-
-`nvidia/NVIDIA-Nemotron-3-Super-120B-A12B` for all agents (gpt-oss-120b only as automatic fallback when busy).
-
-
-
-\## Files
-
-`data.py` clean data generator · `tricks.py` base tricks + scorer · `team.py` Cleaner team, sandbox, watchdog · `trickster.py` · `evolve.py` · `evaluate.py` · `final.py` · `replay.py`
-
+# Unfoolable 🛡️
+**Most AI agents can be fooled into saying "done." Unfoolable is a self-improving agent team that trains against an adversary, verified by an independent Auditor, so it can't fool itself.**
+
+Built from scratch at The Recursive Agents Hackathon (Oct 17, 2026) on **Crusoe Managed Inference**, 100% **NVIDIA Nemotron**. Total cost of every experiment: **under $5**.
+
+## Headline results (hidden tasks on data kinds never seen in training)
+| | Result |
+|---|---|
+| False "done" claims, WITHOUT vs WITH independent Auditor | **8/9 (89%) → 1/2 (50%)** |
+| Starting team + Auditor, 18 hidden tasks | **0 false "done" claims**, accuracy up (94.0→96.8% standard, 45.8→51.9% hard) |
+| Self-evolution (v0 → v6), adversarial hard mode | **45.8% → 62.3% accuracy (+16.5 pts)** |
+| Coach's predicted gain vs. real gain | **overestimated 7 of 7 times, avg +48 pts** |
+| Self-edits proposed / rejected by the gate | 7 / **4 rejected** |
+| Trickster tricks that failed the fairness check | 2 caught by review; now enforced automatically (trick must ship an exact `untrick`) |
+
+Full tables: `AUDIT_RESULTS.md`, `RESULTS.md`, `RESULTS_backup1.md`. Raw data: `runs/`, `runs_backup1/`.
+
+## The problem
+Agents fill vague goals with their own assumptions and confidently report success. When agents improve themselves, they also claim every change helped. Our starting team said "done" on hidden tasks and was wrong almost every time.
+
+## How it works
+**Cleaner team** (messy data file + one-line goal → clean data):
+- **Spec writer** (Nemotron Super): writes its own *definition of done* as executable checks
+- **Builder** (Nemotron Super): writes the cleaning code
+- **Sandbox**: code runs in a separate process; checks run in another process that never imports the builder's code (nonce-protected)
+- **Watchdog** (plain code, no AI): detects loops, stalls, drift → CONTINUE / REPLAN / STOP / ESCALATE
+- **Auditor** (Nemotron Super): when the checks pass, it independently re-derives a sample of rows (weirdest first) straight from the raw file, never seeing the code. Any disagreement → not done, fix it. *Independent recomputation, not opinion*, so it works in production where no answer key exists.
+- **Checkpoint**: keeps the best attempt, not the last one
+- **Needs-human inbox**: every escalation is written to `runs/NEEDS_HUMAN.md`, so you can walk away
+
+**Trickster** (Nemotron Super): invents realistic new ways to corrupt data (fullwidth Unicode, zero-width characters, quoted ids...), aimed at the Cleaner's weak spots. Each trick must ship an `untrick()` that restores the exact original values, run in a separate sandbox. That proves the trick is fair.
+
+**Coach** (Nemotron Super): reads the Cleaner's hidden mistakes and proposes ONE general lesson, with a predicted gain.
+
+**Gate**: old vs. new on the same fresh jobs. Keep a lesson only if accuracy rises ≥2 points AND false "done" claims don't increase. We log the **mirage gap** = predicted − real gain.
+
+**Referee**: ground truth is known exactly (we corrupt clean data we generated), so scoring never needs an LLM judge.
+
+## What we learned
+1. **Agents can't grade their own homework.** Self-written checks passed wrong output 8 of 9 times. An independent Auditor that re-derives the answer from the source cut that sharply.
+2. **Self-assessment is a mirage.** The Coach predicted +28% to +65% for every lesson; real effects ranged from −28 to +12 points. Only the gate kept the team from getting worse.
+3. **Adversaries cheat too.** The Trickster invented tricks that destroyed information. Fix: it must prove fairness with an exact inverse.
+4. **Trust has a price.** With the Auditor, the team says "done" less often. For agents you walk away from, "not sure" beats confidently wrong.
+
+## Honest limitations
+- Small samples (9 hidden tasks per condition, 1 seed); a few points of difference is noise. v6 + Auditor scored lower in hard mode (several runs crashed to 0%).
+- The Auditor is itself an LLM and can be wrong; it samples ~8 rows, so rare errors can slip through.
+- Run 1 used a harness with two bugs (JSON parsing of regex checks; discarding the best attempt). We fixed them, re-measured the baseline, and report the fixed numbers. Both runs are in the repo.
+
+## Run it
+    python -m venv .venv && .venv\Scripts\activate
+    pip install openai rich pandas python-dotenv
+    # .env -> CRUSOE_API_KEY=...
+    python team.py --audit          # one live job with the Auditor
+    python evaluate.py              # v0 baseline on hidden tasks
+    python evolve.py 3 [--resume]   # Trickster vs Cleaner, Coach + Gate
+    python final.py                 # before/after table -> RESULTS.md
+    python final2.py                # Auditor experiment -> AUDIT_RESULTS.md
+    python replay.py runs/live_log.jsonl 40 TRICK,COACH,KEEP,REJECT,SCORE
+
+## Models (Crusoe Managed Inference)
+`nvidia/NVIDIA-Nemotron-3-Super-120B-A12B` for every agent role; `openai/gpt-oss-120b` only as automatic fallback when Nemotron is busy.
+
+## Files
+`data.py` clean data generator · `tricks.py` base tricks + scorer · `team.py` Cleaner team, sandbox, watchdog, Auditor · `trickster.py` tricks + fairness proof · `evolve.py` · `evaluate.py` · `final.py` · `final2.py` · `replay.py`
