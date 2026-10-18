@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unfoolable — when AI says “done”, is it?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F6FC; --ink:#0F1B3D; --muted:#4A5677; --line:#D3DBEA; --surface:#FFFFFF; --panel:#E7EDF8;
+  --stamp:#C9302A; --verify:#0B8C76; --hilite:#FFE14D; --hilite-ink:#0F1B3D;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1330; --ink:#EEF2FB; --muted:#A3AECB; --line:#24315A; --surface:#111D41; --panel:#16244F;
+    --stamp:#FF5C52; --verify:#2BD3B4; --hilite:#FFE14D; --hilite-ink:#0F1B3D;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1330; --ink:#EEF2FB; --muted:#A3AECB; --line:#24315A; --surface:#111D41; --panel:#16244F;
+  --stamp:#FF5C52; --verify:#2BD3B4; --hilite:#FFE14D; --hilite-ink:#0F1B3D;
+  color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--hilite);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 clamp(1.1rem,4vw,2.5rem)}
+h1,h2,h3{font-family:"Syne","Arial Black",system-ui,sans-serif;line-height:1.05;margin:0;letter-spacing:-0.01em}
+h2{font-size:clamp(2rem,4.6vw,3.2rem);max-width:18ch}
+h3{font-size:1.35rem}
+p{margin:0}
+.lede{color:var(--muted);max-width:60ch;font-size:1.15rem}
+mark{background:var(--hilite);color:var(--hilite-ink);padding:0 .2em;border-radius:3px}
+section{padding:clamp(4rem,9vw,7rem) 0;border-top:1px solid var(--line)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+/* hero */
+.hero{position:relative;min-height:min(100svh,940px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:center;gap:1rem;overflow:hidden}
+.hero-copy{position:relative;z-index:2;padding:4rem 0 3rem}
+.hero h1{font-size:clamp(2.8rem,7vw,5.6rem);font-weight:800}
+.hero h1 .q{display:block;color:var(--stamp)}
+.hero .lede{margin-top:1.5rem}
+.hero-stat{margin-top:2rem;display:flex;gap:1.25rem;align-items:center;flex-wrap:wrap}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--ink)}
+.dot.bad{background:var(--stamp);border-color:var(--stamp)}
+.dot.good{background:var(--verify);border-color:var(--verify)}
+.hero-stat small{color:var(--muted);font-size:.95rem;max-width:30ch}
+.cta-row{margin-top:2.2rem;display:flex;gap:.8rem;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.2rem;border-radius:999px;font-weight:600;text-decoration:none;border:2px solid var(--ink);color:var(--ink);background:transparent;font:inherit;cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--bg)}
+#scene{position:relative;height:min(78svh,720px);min-height:420px}
+#scene canvas{display:block;width:100%;height:100%}
+.scene-caption{position:absolute;left:0;right:0;bottom:.6rem;text-align:center;color:var(--muted);font-size:.9rem}
+
+/* story stepper */
+.story{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);gap:clamp(1.5rem,4vw,3.5rem);margin-top:2.5rem;align-items:start}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:.4rem;counter-reset:s}
+.steps button{width:100%;text-align:left;font:inherit;color:var(--ink);background:transparent;border:0;border-left:4px solid var(--line);padding:.8rem 1rem;cursor:pointer;display:grid;grid-template-columns:2rem 1fr;gap:.6rem;align-items:baseline}
+.steps button .n{font-family:"Syne",sans-serif;font-weight:800;font-size:1.3rem;color:var(--muted)}
+.steps button[aria-current="step"]{border-left-color:var(--hilite);background:var(--panel)}
+.steps button[aria-current="step"] .n{color:var(--ink)}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:clamp(1.1rem,3vw,2rem);min-height:430px;position:relative;box-shadow:0 30px 60px -40px rgba(15,27,61,.45)}
+.who{display:inline-flex;align-items:center;gap:.55rem;font-weight:600;padding:.35rem .8rem;border-radius:999px;background:var(--panel);font-size:.95rem}
+.who i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.stage h3{margin:1rem 0 .4rem}
+.stage .say{color:var(--muted);max-width:58ch}
+.table-scroll{overflow-x:auto;margin-top:1.3rem;border:1px solid var(--line);border-radius:12px}
+table.rowview{border-collapse:collapse;width:100%;min-width:520px;font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.95rem}
+.rowview th{text-align:left;font-family:"IBM Plex Sans",sans-serif;font-weight:500;color:var(--muted);font-size:.85rem;padding:.55rem .8rem;border-bottom:1px solid var(--line)}
+.rowview td{padding:.75rem .8rem;transition:background .35s,color .35s}
+.rowview td.messy{color:var(--stamp);background:color-mix(in srgb,var(--stamp) 10%,transparent)}
+.rowview td.clean{color:var(--verify);background:color-mix(in srgb,var(--verify) 10%,transparent)}
+.rowview td.gone{color:var(--muted);text-decoration:line-through}
+.checks{list-style:none;padding:0;margin:1.2rem 0 0;display:grid;gap:.45rem}
+.checks li{display:flex;gap:.6rem;align-items:baseline}
+.checks .ok{color:var(--verify);font-weight:700}
+.checks .no{color:var(--stamp);font-weight:700}
+.stamp{position:absolute;right:clamp(1rem,3vw,2rem);top:clamp(1rem,3vw,1.6rem);font-family:"Syne",sans-serif;font-weight:800;font-size:clamp(1.1rem,2.6vw,1.6rem);padding:.35rem .9rem;border:4px solid currentColor;border-radius:10px;transform:rotate(6deg);animation:thump .45s cubic-bezier(.2,1.6,.4,1)}
+.stamp.bad{color:var(--stamp)} .stamp.good{color:var(--verify)} .stamp.warn{color:var(--muted)}
+@keyframes thump{from{transform:rotate(6deg) scale(1.6);opacity:0}to{transform:rotate(6deg) scale(1);opacity:1}}
+.note{margin-top:1.2rem;padding:.8rem 1rem;border-radius:10px;background:var(--panel);font-size:.98rem}
+.stepnav{display:flex;gap:.6rem;margin-top:1.4rem}
+
+/* roles */
+.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(1.5rem,4vw,3rem);margin-top:2.5rem}
+.group h3{font-size:1.15rem;color:var(--muted);font-family:"IBM Plex Sans",sans-serif;font-weight:600;margin-bottom:1rem}
+.role{display:grid;grid-template-columns:3.2rem 1fr;gap:1rem;padding:1.1rem 0;border-top:1px solid var(--line)}
+.role:first-of-type{border-top:0}
+.glyph{width:3.2rem;height:3.2rem;border-radius:14px;display:grid;place-items:center;font-size:1.5rem;background:var(--panel)}
+.role b{display:block;font-size:1.1rem}
+.role span.plain{color:var(--muted);font-size:.9rem}
+.role p{margin-top:.25rem}
+
+/* mirage chart */
+.chart-box{margin-top:2.5rem;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:clamp(1rem,3vw,2rem)}
+.chart-scroll{overflow-x:auto}
+#mirage{display:block;min-width:640px;width:100%;height:auto}
+.legend{display:flex;gap:1.4rem;flex-wrap:wrap;color:var(--muted);font-size:.92rem;margin-bottom:1rem}
+.legend span{display:inline-flex;align-items:center;gap:.45rem}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+#roundInfo{margin-top:1rem;min-height:3.2em;max-width:70ch}
+.round-hit{cursor:pointer}
+.round-hit:focus{outline:none}
+.round-hit:focus-visible rect.hitbox{stroke:var(--hilite);stroke-width:3}
+
+/* results */
+.results{display:grid;gap:2.5rem;margin-top:2.5rem}
+.result{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:2rem;align-items:center;padding-top:2rem;border-top:1px solid var(--line)}
+.result:first-child{border-top:0;padding-top:0}
+.result h3{font-size:clamp(1.5rem,3vw,2.1rem)}
+.result p{color:var(--muted);margin-top:.6rem;max-width:46ch}
+.compare{display:grid;gap:1rem}
+.compare .lab{font-size:.92rem;color:var(--muted);margin-bottom:.35rem}
+.bar{height:34px;border-radius:8px;background:var(--panel);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:.6rem;font-style:normal;font-weight:600;color:#fff;font-family:"IBM Plex Mono",monospace}
+.big-dots .dot{width:26px;height:26px}
+
+/* limits & footer */
+.limits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem;margin-top:2rem}
+.limits p{color:var(--muted);font-size:.98rem}
+.limits b{display:block;color:var(--ink);margin-bottom:.3rem}
+footer{border-top:1px solid var(--line);padding:3rem 0 4rem;color:var(--muted);font-size:.95rem}
+footer .wrap{display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap}
+
+@media (max-width:880px){
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-copy{padding-bottom:0}
+  #scene{height:420px;min-height:360px}
+  .story,.roles,.result{grid-template-columns:1fr}
+  .limits{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  .stamp{animation:none}
+  .rowview td{transition:none}
+}
+</style>
+</head>
+<body>
+
+<header class="wrap hero">
+  <div class="hero-copy">
+    <h1>When AI says <span class="q">“done”, is it?</span></h1>
+    <p class="lede">Unfoolable is a team of AI agents that cleans messy business data, and refuses to say “done” until an independent checker has redone part of the work and agrees.</p>
+    <div class="hero-stat">
+      <div class="dots" aria-label="9 done claims, 8 of them wrong">
+        <span class="dot bad"></span><span class="dot bad"></span><span class="dot bad"></span><span class="dot bad"></span><span class="dot bad"></span><span class="dot bad"></span><span class="dot bad"></span><span class="dot bad"></span><span class="dot good"></span>
+      </div>
+      <small>Without a checker, our agents said “done” 9 times. 8 of those were wrong.</small>
+    </div>
+    <div class="cta-row">
+      <a class="btn primary" href="#story">See one row go through it</a>
+      <a class="btn" href="https://github.com/stevegeorge2002/unfoolable" target="_blank" rel="noopener">View the code on GitHub</a>
+    </div>
+  </div>
+  <div id="scene" aria-hidden="true">
+    <p class="scene-caption">Messy rows in. The checker’s beam verifies each one before it flips to clean.</p>
+  </div>
+</header>
+
+<section id="problem">
+  <div class="wrap">
+    <h2>The cleaning is easy. Knowing it’s right is the hard part.</h2>
+    <p class="lede" style="margin-top:1.2rem">Companies get spreadsheets from suppliers, banks and old systems, written every way imaginable: dates in five formats, prices like “1.234,50 EUR”, names as “SMITH, JOHN”, ids like “#3928”. An AI can tidy most of it in seconds. The danger is the few rows it gets wrong <mark>while confidently reporting success</mark>. In a file of 50,000 rows, nobody checks by hand, so silent mistakes become missed customers and wrong payments.</p>
+  </div>
+</section>
+
+<section id="story">
+  <div class="wrap">
+    <h2>Follow one messy row through the system</h2>
+    <p class="lede" style="margin-top:1rem">This is the exact kind of mistake our agents made in testing. Click through the steps.</p>
+    <div class="story">
+      <ol class="steps" id="steps"></ol>
+      <div>
+        <div class="stage" id="stage" aria-live="polite"></div>
+        <div class="stepnav">
+          <button class="btn" id="prevBtn" type="button">Back</button>
+          <button class="btn primary" id="nextBtn" type="button">Next step</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="team">
+  <div class="wrap">
+    <h2>Who does what, and why each one exists</h2>
+    <div class="roles">
+      <div class="group">
+        <h3>Doing the job</h3>
+        <div class="role"><div class="glyph">🧹</div><div><b>The worker</b><span class="plain">a.k.a. the Cleaner</span><p>Writes its own checklist of what “done” means, then writes code that cleans the file.</p></div></div>
+        <div class="role"><div class="glyph">🔍</div><div><b>The checker</b><span class="plain">a.k.a. the Auditor</span><p>Exists because the worker can’t be trusted to grade itself. It re-solves a few of the weirdest rows straight from the raw file, never looking at the worker’s answer, and compares.</p></div></div>
+        <div class="role"><div class="glyph">⏱️</div><div><b>The watchdog</b><span class="plain">plain code, no AI</span><p>Exists because AI gets stuck repeating itself. It spots loops and stalls, forces a new approach, and leaves a note for a human only when truly stuck.</p></div></div>
+      </div>
+      <div class="group">
+        <h3>Getting better over time</h3>
+        <div class="role"><div class="glyph">😈</div><div><b>The sparring partner</b><span class="plain">a.k.a. the Trickster</span><p>Exists so the worker meets nasty cases in practice, not in production. It invents new messes like invisible characters and lookalike letters, and must prove each one can be undone so the game stays fair.</p></div></div>
+        <div class="role"><div class="glyph">🧑‍🏫</div><div><b>The coach</b></div><p style="grid-column:2">Reads the worker’s hidden mistakes after each round and suggests one lesson, with a prediction of how much it will help.</p></div>
+        <div class="role"><div class="glyph">⚖️</div><div><b>The test</b><span class="plain">a.k.a. the Gate</span><p>Exists because the coach is overconfident. Old and new versions sit the same fresh exam; a lesson is kept only if the score really rises.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mirage-section">
+  <div class="wrap">
+    <h2>The coach was sure every time. It was wrong every time.</h2>
+    <p class="lede" style="margin-top:1rem">Seven training rounds. The outline shows what the coach predicted its lesson would add; the solid bar shows what really happened on a fresh test. Select a round for details.</p>
+    <div class="chart-box">
+      <div class="legend">
+        <span><i class="sw" style="border:2px dashed var(--muted)"></i>Coach’s prediction</span>
+        <span><i class="sw" style="background:var(--verify)"></i>Real gain, kept</span>
+        <span><i class="sw" style="background:var(--stamp)"></i>Real result, rejected</span>
+      </div>
+      <div class="chart-scroll"><svg id="mirage" viewBox="0 0 900 380" role="img" aria-label="Predicted versus real gain for 7 training rounds"></svg></div>
+      <p id="roundInfo"></p>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap">
+    <h2>What happened on data it had never seen</h2>
+    <div class="results">
+      <div class="result">
+        <div><h3>Wrong “done” claims dropped from 8 of 9 to 1 of 2</h3><p>Same hidden tasks, with and without the checker. Red is a “done” that was actually wrong.</p></div>
+        <div class="compare">
+          <div><div class="lab">Without the checker</div><div class="dots big-dots" id="dotsA"></div></div>
+          <div><div class="lab">With the checker</div><div class="dots big-dots" id="dotsB"></div></div>
+        </div>
+      </div>
+      <div class="result">
+        <div><h3>Zero wrong “done” claims across 18 hidden tasks</h3><p>The starting team plus the checker never claimed a wrong job was finished, and its accuracy went up in both easy and hard files.</p></div>
+        <div class="compare">
+          <div><div class="lab">Standard mess, accuracy</div><div class="bar"><i style="width:94%;background:var(--muted)">94.0%</i></div><div class="bar" style="margin-top:.4rem"><i style="width:96.8%;background:var(--verify)">96.8%</i></div></div>
+          <div><div class="lab">Adversarial mess, accuracy</div><div class="bar"><i style="width:45.8%;background:var(--muted)">45.8%</i></div><div class="bar" style="margin-top:.4rem"><i style="width:51.9%;background:var(--verify)">51.9%</i></div></div>
+        </div>
+      </div>
+      <div class="result">
+        <div><h3>Practice against the sparring partner paid off</h3><p>After 7 rounds, the evolved worker handled the nastiest messes on data types it never trained on far better than the starting version.</p></div>
+        <div class="compare">
+          <div><div class="lab">Starting version</div><div class="bar"><i style="width:45.8%;background:var(--muted)">45.8%</i></div></div>
+          <div><div class="lab">After training (v6)</div><div class="bar"><i style="width:62.3%;background:var(--verify)">62.3%</i></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="limits">
+  <div class="wrap">
+    <h2>Honest limits</h2>
+    <div class="limits">
+      <p><b>Small samples</b>9 hidden tasks per condition and one run each, so a few points either way is noise.</p>
+      <p><b>The checker can be wrong too</b>It is an AI that samples about 8 rows, so rare mistakes can still slip through, and it makes the team more cautious.</p>
+      <p><b>Synthetic test data</b>Built on realistic generated business tables so the right answer is always known; not yet run on a real company’s files.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Built by Steve George at The Recursive Agents Hackathon, Oct 17 2026, on Crusoe Managed Inference with NVIDIA Nemotron. This explainer page was made after the event.</span>
+    <a href="https://github.com/stevegeorge2002/unfoolable" target="_blank" rel="noopener">github.com/stevegeorge2002/unfoolable</a>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- dots in results ---------- */
+  function dots(el, bad, total){ for(let i=0;i<total;i++){ const d=document.createElement('span'); d.className='dot '+(i<bad?'bad':'good'); el.appendChild(d);} }
+  dots(document.getElementById('dotsA'),8,9);
+  dots(document.getElementById('dotsB'),1,2);
+
+  /* ---------- story stepper ---------- */
+  const cols=['id','name','amount','date'];
+  const messyRow=['#3928','SMITH, JOHN','$1,200.00','04 May 2024'];
+  const cleanRow=['3928','John Smith','1200.00','2024-05-04'];
+  const steps=[
+    {t:'A messy file arrives', who:'The file', color:'var(--muted)',
+     h:'A supplier sends 30 rows like this one',
+     say:'Every field is written differently from what the company’s system expects.',
+     row:messyRow.map(v=>[v,'messy'])},
+    {t:'The worker cleans it', who:'The worker (Cleaner)', color:'var(--hilite)',
+     h:'Names, prices and dates come out perfect…',
+     say:'The worker writes cleaning code. Most rows look great. But its code reads ids as numbers, and “#3928” isn’t one, so this whole row quietly falls out of the output.',
+     row:cleanRow.map(v=>[v,'gone']), note:'The cleaned file has 29 rows. Row 3928 is gone, and nothing on screen says so.'},
+    {t:'It checks its own homework', who:'The worker (Cleaner)', color:'var(--hilite)',
+     h:'Its own checklist says everything passes',
+     say:'The worker wrote rules for “done” before it started. Every rule passes, because none of them asks whether a row went missing.',
+     checks:[['Dates look like YYYY-MM-DD',1],['No $ signs or commas in prices',1],['Names in “First Last” form',1],['Every id is unique',1]], stamp:['DONE?','warn']},
+    {t:'The checker redoes it', who:'The checker (Auditor)', color:'var(--verify)',
+     h:'The checker solves the weirdest rows itself',
+     say:'Without looking at the worker’s answer, the checker picks the strangest-looking rows from the raw file, cleans them on its own, and compares. Row 3928 is in its answer, but not in the worker’s.',
+     row:cleanRow.map(v=>[v,'clean']), checks:[['Row 3928 found in the worker’s output',0]], stamp:['NOT DONE','bad'],
+     note:'In testing, this was the most common mistake the checker caught: rows silently dropped.'},
+    {t:'Fixed and verified', who:'Worker + checker', color:'var(--verify)',
+     h:'The worker fixes its code, the checker agrees',
+     say:'The worker gets the exact disagreement, learns to strip prefixes like “#” and “ID-” from ids, and runs again. This time the checker’s answers match.',
+     row:cleanRow.map(v=>[v,'clean']), checks:[['Row 3928 found in the worker’s output',1],['Checker’s answers match on all sampled rows',1]], stamp:['VERIFIED','good']}
+  ];
+  let cur=0;
+  const stepsEl=document.getElementById('steps'), stage=document.getElementById('stage');
+  steps.forEach((s,i)=>{
+    const li=document.createElement('li'); const b=document.createElement('button'); b.type='button';
+    b.innerHTML='<span class="n">'+(i+1)+'</span><span>'+s.t+'</span>';
+    b.addEventListener('click',()=>show(i)); li.appendChild(b); stepsEl.appendChild(li);
+  });
+  function show(i){
+    cur=i; const s=steps[i];
+    [...stepsEl.querySelectorAll('button')].forEach((b,j)=>{ if(j===i) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
+    let html='<span class="who"><i style="background:'+s.color+'"></i>'+s.who+'</span><h3>'+s.h+'</h3><p class="say">'+s.say+'</p>';
+    if(s.row){
+      html+='<div class="table-scroll"><table class="rowview"><thead><tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody><tr>'+
+        s.row.map(([v,k])=>'<td class="'+k+'">'+v+'</td>').join('')+'</tr></tbody></table></div>';
+    }
+    if(s.checks){ html+='<ul class="checks">'+s.checks.map(([t,ok])=>'<li><span class="'+(ok?'ok':'no')+'">'+(ok?'✓':'✗')+'</span>'+t+'</li>').join('')+'</ul>'; }
+    if(s.note){ html+='<p class="note">'+s.note+'</p>'; }
+    if(s.stamp){ html+='<span class="stamp '+s.stamp[1]+'">'+s.stamp[0]+'</span>'; }
+    stage.innerHTML=html;
+    document.getElementById('prevBtn').disabled = i===0;
+    document.getElementById('nextBtn').textContent = i===steps.length-1 ? 'Start over' : 'Next step';
+  }
+  document.getElementById('prevBtn').addEventListener('click',()=>show(Math.max(0,cur-1)));
+  document.getElementById('nextBtn').addEventListener('click',()=>show(cur===steps.length-1?0:cur+1));
+  show(0);
+
+  /* ---------- mirage chart ---------- */
+  const rounds=[
+    {p:40,r:-9.2,k:0,d:'Round 1: the sparring partner swapped letters for lookalike Unicode. The coach promised +40 points; the lesson actually cost 9.2. Rejected.'},
+    {p:40,r:-13.0,k:0,d:'Round 2: invisible spaces hidden inside words. Promised +40, real −13.0. Rejected.'},
+    {p:65,r:8.8,k:1,d:'Round 3: “check every field is filled and correctly formatted.” Promised +65, real +8.8. Kept.'},
+    {p:45,r:-28.5,k:0,d:'Round 4: promised +45, real −28.5. The test stopped a lesson that would have made the team much worse.'},
+    {p:40,r:11.6,k:1,d:'Round 5: “watch for accidentally doubled digits.” Promised +40, real +11.6, and fewer false “done” claims. Kept.'},
+    {p:45,r:4.4,k:1,d:'Round 6: “strip stray characters before reading numbers.” Promised +45, real +4.4. Kept.'},
+    {p:40,r:1.1,k:0,d:'Round 7: a small gain, but false “done” claims rose from 1 to 3, so the test rejected it.'}
+  ];
+  const svg=document.getElementById('mirage'), NS='http://www.w3.org/2000/svg';
+  const W=900,H=380,top=30,bottom=330,y0=top+(bottom-top)*(70/100); // scale -30..70
+  const ys=v=>y0 - v*((bottom-top)/100);
+  function el(n,a){const e=document.createElementNS(NS,n); for(const k in a) e.setAttribute(k,a[k]); return e;}
+  function drawChart(){
+    svg.innerHTML='';
+    const ink=css('--ink'), muted=css('--muted'), line=css('--line'), verify=css('--verify'), stamp=css('--stamp');
+    [-20,0,20,40,60].forEach(v=>{
+      svg.appendChild(el('line',{x1:60,x2:W-10,y1:ys(v),y2:ys(v),stroke:v===0?ink:line,'stroke-width':v===0?2:1}));
+      const t=el('text',{x:50,y:ys(v)+5,'text-anchor':'end',fill:muted,'font-size':14,'font-family':'IBM Plex Mono, monospace'}); t.textContent=(v>0?'+':'')+v; svg.appendChild(t);
+    });
+    const slot=(W-80)/rounds.length;
+    rounds.forEach((r,i)=>{
+      const cx=70+slot*i+slot/2, bw=Math.min(54,slot*0.42);
+      const g=el('g',{class:'round-hit',tabindex:0,role:'button','aria-label':'Round '+(i+1)});
+      g.appendChild(el('rect',{class:'hitbox',x:cx-slot/2+4,y:top-10,width:slot-8,height:bottom-top+40,fill:'transparent',rx:8}));
+      g.appendChild(el('rect',{x:cx-bw/2,y:ys(r.p),width:bw,height:ys(0)-ys(r.p),fill:'none',stroke:muted,'stroke-width':2,'stroke-dasharray':'6 5',rx:4}));
+      const rv=r.r, yTop=rv>=0?ys(rv):ys(0), hh=Math.abs(ys(rv)-ys(0));
+      g.appendChild(el('rect',{x:cx-bw/2+8,y:yTop,width:bw-16,height:Math.max(hh,2),fill:r.k?verify:stamp,rx:3}));
+      const lab=el('text',{x:cx,y:rv>=0?yTop-8:yTop+hh+18,'text-anchor':'middle',fill:ink,'font-size':14,'font-weight':600,'font-family':'IBM Plex Mono, monospace'});
+      lab.textContent=(rv>0?'+':'')+rv; g.appendChild(lab);
+      const pl=el('text',{x:cx,y:ys(r.p)-8,'text-anchor':'middle',fill:muted,'font-size':13,'font-family':'IBM Plex Mono, monospace'}); pl.textContent='+'+r.p; g.appendChild(pl);
+      const rl=el('text',{x:cx,y:H-8,'text-anchor':'middle',fill:muted,'font-size':14,'font-family':'IBM Plex Sans, sans-serif'}); rl.textContent='Round '+(i+1); g.appendChild(rl);
+      const pick=()=>{document.getElementById('roundInfo').textContent=r.d;};
+      g.addEventListener('mouseenter',pick); g.addEventListener('focus',pick); g.addEventListener('click',pick);
+      g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick();}});
+      svg.appendChild(g);
+    });
+  }
+  document.getElementById('roundInfo').textContent='On average the coach overestimated by 48 points. The test kept 3 of its 7 lessons.';
+  drawChart();
+
+  /* ---------- 3D hero ---------- */
+  const host=document.getElementById('scene');
+  if(!window.THREE){ return; }
+  let renderer;
+  try{ renderer=new THREE.WebGLRenderer({antialias:true,alpha:true}); }catch(e){ return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  host.insertBefore(renderer.domElement, host.firstChild);
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(32,1,0.1,100);
+  camera.position.set(0,0,11.5);
+  const world=new THREE.Group(); scene.add(world);
+
+  const rowsData=[
+    {m:['#3928','SMITH, JOHN','$1,200.00','04 May 2024'], c:['3928','John Smith','1200.00','2024-05-04']},
+    {m:['ID-7710','maria garcia','1.234,50 EUR','03/14/2024'], c:['7710','Maria Garcia','1234.50','2024-03-14']},
+    {m:['５８０２','WEI   CHEN','USD 89.9','Feb 2, 2023'], c:['5802','Wei Chen','89.90','2023-02-02']},
+    {m:['ID-4417','Khan, Aisha','2,045.10 USD','2025/01/09'], c:['4417','Aisha Khan','2045.10','2025-01-09']},
+    {m:['9150','  fatima lopez ','$972.63','26.11.2024'], c:['9150','Fatima Lopez','972.63','2024-11-26']},
+    {m:['#6202','LEE, KENJI','USD 3,310.00','Jan 7, 2025'], c:['6202','Kenji Lee','3310.00','2025-01-07']}
+  ];
+  const CW=1400, CH=170, PW=5.6, PH=PW*CH/CW;
+  function cardTexture(vals, clean){
+    const cv=document.createElement('canvas'); cv.width=CW; cv.height=CH; const x=cv.getContext('2d');
+    const surface=css('--surface'), ink=css('--ink'), line=css('--line'), good=css('--verify'), bad=css('--stamp');
+    x.fillStyle=surface; roundRect(x,4,4,CW-8,CH-8,26); x.fill();
+    x.lineWidth=6; x.strokeStyle=clean?good:bad; roundRect(x,4,4,CW-8,CH-8,26); x.stroke();
+    x.fillStyle=clean?good:bad; roundRect(x,4,4,22,CH-8,12); x.fill();
+    const widths=[230,360,330,330], start=60; let cx=start;
+    x.font='500 46px "IBM Plex Mono", Menlo, Consolas, monospace'; x.textBaseline='middle';
+    vals.forEach((v,i)=>{
+      x.fillStyle = clean ? ink : bad;
+      x.fillText(v, cx, CH/2);
+      cx+=widths[i];
+      if(i<vals.length-1){ x.fillStyle=line; x.fillRect(cx-28,30,3,CH-60); }
+    });
+    x.font='700 54px "IBM Plex Sans", Arial, sans-serif'; x.fillStyle=clean?good:bad; x.textAlign='right';
+    x.fillText(clean?'✓':'✗', CW-40, CH/2+2);
+    const t=new THREE.CanvasTexture(cv); t.anisotropy=renderer.capabilities.getMaxAnisotropy(); return t;
+  }
+  function roundRect(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();}
+
+  const cards=[];
+  const geo=new THREE.PlaneGeometry(PW,PH);
+  rowsData.forEach((r,i)=>{
+    const g=new THREE.Group();
+    const front=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({transparent:true}));
+    const back=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({transparent:true}));
+    back.rotation.x=Math.PI;
+    g.add(front); g.add(back);
+    g.position.set((i%2?0.35:-0.35), (rowsData.length/2-0.5-i)*0.92, -i*0.18);
+    g.userData={front,back,target:0,data:r,phase:i*0.7};
+    world.add(g); cards.push(g);
+  });
+  function paintCards(){ cards.forEach(g=>{ const d=g.userData.data;
+    if(g.userData.front.material.map) g.userData.front.material.map.dispose();
+    if(g.userData.back.material.map) g.userData.back.material.map.dispose();
+    g.userData.front.material.map=cardTexture(d.m,false); g.userData.front.material.needsUpdate=true;
+    g.userData.back.material.map=cardTexture(d.c,true); g.userData.back.material.needsUpdate=true; }); }
+
+  // scanning beam (the checker)
+  const beam=new THREE.Group();
+  const beamCore=new THREE.Mesh(new THREE.PlaneGeometry(7.4,0.05),new THREE.MeshBasicMaterial({color:new THREE.Color(css('--verify'))}));
+  const glowCv=document.createElement('canvas'); glowCv.width=4; glowCv.height=128; const gx=glowCv.getContext('2d');
+  const gr=gx.createLinearGradient(0,0,0,128); gr.addColorStop(0,'rgba(255,255,255,0)'); gr.addColorStop(.5,'rgba(255,255,255,1)'); gr.addColorStop(1,'rgba(255,255,255,0)'); gx.fillStyle=gr; gx.fillRect(0,0,4,128);
+  const beamGlow=new THREE.Mesh(new THREE.PlaneGeometry(7.4,0.9),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(glowCv),color:new THREE.Color(css('--verify')),transparent:true,opacity:.35,depthWrite:false}));
+  beam.add(beamGlow); beam.add(beamCore); beam.position.z=0.6; world.add(beam);
+
+  function recolor(){ const c=new THREE.Color(css('--verify')); beamCore.material.color=c; beamGlow.material.color=c; paintCards(); }
+
+  function resize(){ const w=host.clientWidth, h=host.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.fov = w<560?44:32; camera.updateProjectionMatrix(); }
+  window.addEventListener('resize',resize);
+
+  let mx=0,my=0;
+  host.addEventListener('pointermove',e=>{const r=host.getBoundingClientRect(); mx=(e.clientX-r.left)/r.width-.5; my=(e.clientY-r.top)/r.height-.5;});
+  host.addEventListener('pointerleave',()=>{mx=0;my=0;});
+
+  const topY=cards[0].position.y+0.8, botY=cards[cards.length-1].position.y-0.8;
+  const SWEEP=5.2, HOLD=2.2, RESET=1.2, CYCLE=SWEEP+HOLD+RESET;
+  const clock=new THREE.Clock();
+  function frame(){
+    const t=clock.getElapsedTime(), c=t%CYCLE;
+    if(c<SWEEP){ beam.position.y=topY+(botY-topY)*(c/SWEEP); beam.visible=true;
+      cards.forEach(g=>{ if(beam.position.y<g.position.y-0.05) g.userData.target=Math.PI; }); }
+    else if(c<SWEEP+HOLD){ beam.visible=false; }
+    else { beam.visible=false; cards.forEach(g=>g.userData.target=0); }
+    cards.forEach(g=>{ g.rotation.x += (g.userData.target-g.rotation.x)*0.12; g.position.z = -cards.indexOf(g)*0.18 + Math.sin(t*0.8+g.userData.phase)*0.08; g.rotation.y = Math.sin(t*0.5+g.userData.phase)*0.06; });
+    world.rotation.y += ((mx*0.5 - 0.22) - world.rotation.y)*0.05;
+    world.rotation.x += ((my*0.3 + 0.08) - world.rotation.x)*0.05;
+    renderer.render(scene,camera);
+    requestAnimationFrame(frame);
+  }
+  function staticFrame(){ world.rotation.set(0.08,-0.22,0); beam.visible=false; cards.forEach((g,i)=>{ g.rotation.x = i<3?Math.PI:0; }); renderer.render(scene,camera); }
+
+  const start=()=>{ paintCards(); resize(); if(reduce) staticFrame(); else frame(); };
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(start);
+  const mq=window.matchMedia('(prefers-color-scheme: dark)');
+  if(mq.addEventListener) mq.addEventListener('change',()=>{ recolor(); drawChart(); if(reduce) staticFrame(); });
+})();
+</script>
+</body>
+</html>
