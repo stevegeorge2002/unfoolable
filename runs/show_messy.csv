@@ -1,0 +1,34 @@
+PAYMENT_ID,payer, amount ,paid_on, method 
+1200,"Garcia, Maria",3280.3,2025-01-28,bank_transfer
+1019,Liam Ivanova,600.97,03/11/2024,CARD
+5126,Maria Smith,  975.87 ,25 Sep 2024,cash
+5849,"Ivanova, Wei","$3,913.60",30.05.2023,cash
+ID-5819,Mateo Ivanova,2410.1,2025-08-07,card
+4443,Mateo Murphy,  1198.70 ,2024-09-22,card
+3056,Priya Lopez,2147.11,2024/08/24,card
+1901,"Patel, Grace",1162.06,2024-07-15,CARD
+3290,Mateo Smith,1513.74,24 Sep 2025,cash
+3056,priya lopez,2147.11,2024-08-24,card
+8076,CHLOE PATEL,"USD 3,547.33","Aug 14, 2023", card 
+7041,Sofia Clark,2886.2,2025-09-04,CASH
+4911,"Murphy, Noah",788.62,2025-01-03,card
+7917,  Ahmed   Lopez ,"USD 2,391.07",10.02.2024,bank_transfer
+1851,EMMA ALI,  3586.59 ,2024-12-22,bank_transfer
+7584,Mateo Chen,1757.34 USD,2024-04-11,card
+8215,NOAH TANAKA,USD 185.67,2023-06-15,cash
+8143,Liam Murphy,948.11,2023-03-01,cash
+8215,Noah Tanaka,185.67 USD,2023-06-15,cash
+2662,mateo nair,  4650.72 ,05/07/2025,card
+7932,  Olga   Smith ,705.8,"May 02, 2024", card 
+7584,Mateo Chen,"1.757,34 EUR-format",2024-04-11,CARD
+1430,"Chen, Liam",4441.76,2024-03-06,card
+6656,Hana Haddad,  2872.69 ,08/18/2024,bank_transfer
+ID-2448,hana rossi,2648.06 USD,2025-06-17,bank_transfer
+2169,Sofia Wilson,"2.528,29 EUR-format",20.01.2024,card
+3040,"Ivanova, Fatima",1852.9,2024-01-30,bank_transfer
+9897,Ravi Tanaka,$246.06,2024-10-19, bank_transfer 
+5238,Olga Ivanova,588.81,05/30/2025, bank_transfer 
+2016,OLGA BROWN,4882.31,2024-06-23,cash
+7077,Maria Wilson,268.05 USD,05/22/2025,card
+8498,Hana Garcia,3346.25,2025/06/03,card
+7942,Ahmed Haddad,1885.67,2025/08/07,bank_transfer
